@@ -82,6 +82,11 @@
             </div>
           </div>
 
+          <!-- Hamburger Menu Button (mobile only) -->
+          <button id="mobile-menu-btn" onclick="toggleMobileMenu()" class="flex sm:hidden items-center justify-center w-9 h-9 rounded-lg bg-tierra-800 hover:bg-tierra-700 border border-tierra-600 text-crema transition-all" aria-label="Menú">
+            <i data-lucide="menu" class="w-5 h-5 text-dorado"></i>
+          </button>
+
           <!-- Quick Actions & Auth -->
           <div class="flex items-center gap-2 sm:gap-3">
             
@@ -120,48 +125,66 @@
         </div>
       </div>
 
-      <!-- Navigation Tabs Bar -->
-      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar border-t border-tierra-800">
+      <!-- Navigation Tabs Bar (desktop) -->
+      <nav id="desktop-nav" class="hidden sm:block max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar border-t border-tierra-800">
         <div class="flex space-x-1 sm:space-x-2 py-2 min-w-max" role="tablist">
-          
           <button class="nav-tab nav-tab-active flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-transparent transition-all" data-view="view-journey" role="tab" aria-selected="true">
-            <i data-lucide="compass" class="w-4 h-4 text-dorado"></i>
-            <span>El Viaje del Loco (3 Septenarios)</span>
+            <i data-lucide="compass" class="w-4 h-4 text-dorado"></i><span>El Viaje del Loco</span>
           </button>
-
           <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-formula" role="tab" aria-selected="false">
-            <i data-lucide="flask-conical" class="w-4 h-4 text-dorado"></i>
-            <span>Laboratorio de Fórmulas</span>
+            <i data-lucide="flask-conical" class="w-4 h-4 text-dorado"></i><span>Laboratorio</span>
           </button>
-
           <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-cards" role="tab" aria-selected="false">
-            <i data-lucide="layers" class="w-4 h-4 text-dorado"></i>
-            <span>Enciclopedia (78 Cartas)</span>
+            <i data-lucide="layers" class="w-4 h-4 text-dorado"></i><span>Enciclopedia</span>
           </button>
-
           <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-visual" role="tab" aria-selected="false">
-            <i data-lucide="eye" class="w-4 h-4 text-dorado"></i>
-            <span>¿Qué Ven Tus Ojos?</span>
+            <i data-lucide="eye" class="w-4 h-4 text-dorado"></i><span>¿Qué Ven Tus Ojos?</span>
           </button>
-
           <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-spread" role="tab" aria-selected="false">
-            <i data-lucide="layout-grid" class="w-4 h-4 text-dorado"></i>
-            <span>Mesa de Tiradas</span>
+            <i data-lucide="layout-grid" class="w-4 h-4 text-dorado"></i><span>Mesa de Tiradas</span>
           </button>
-
           <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-quiz" role="tab" aria-selected="false">
-            <i data-lucide="graduation-cap" class="w-4 h-4 text-dorado"></i>
-            <span>Entrenador / Flashcards</span>
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-dorado"></i><span>Entrenador</span>
           </button>
-
           <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-cheatsheet" role="tab" aria-selected="false">
-            <i data-lucide="scroll" class="w-4 h-4 text-dorado"></i>
-            <span>Chuleta del Aprendiz</span>
+            <i data-lucide="scroll" class="w-4 h-4 text-dorado"></i><span>Chuleta</span>
           </button>
-
         </div>
       </nav>
+
+      <!-- Mobile Menu Dropdown -->
+      <div id="mobile-menu" class="hidden sm:hidden border-t border-tierra-700/60 bg-tierra-900/98 backdrop-blur-md">
+        <div class="px-4 py-3 space-y-1">
+          <button class="nav-tab nav-tab-active w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium border border-transparent transition-all" data-view="view-journey" role="tab">
+            <i data-lucide="compass" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>El Viaje del Loco</span>
+          </button>
+          <button class="nav-tab w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-formula" role="tab">
+            <i data-lucide="flask-conical" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>Laboratorio de Fórmulas</span>
+          </button>
+          <button class="nav-tab w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-cards" role="tab">
+            <i data-lucide="layers" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>Enciclopedia (78 Cartas)</span>
+          </button>
+          <button class="nav-tab w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-visual" role="tab">
+            <i data-lucide="eye" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>¿Qué Ven Tus Ojos?</span>
+          </button>
+          <button class="nav-tab w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-spread" role="tab">
+            <i data-lucide="layout-grid" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>Mesa de Tiradas</span>
+          </button>
+          <button class="nav-tab w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-quiz" role="tab">
+            <i data-lucide="graduation-cap" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>Entrenador / Flashcards</span>
+          </button>
+          <button class="nav-tab w-full flex items-center gap-3 px-4 py-3 rounded-xl text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-cheatsheet" role="tab">
+            <i data-lucide="scroll" class="w-5 h-5 text-dorado flex-shrink-0"></i><span>Chuleta del Aprendiz</span>
+          </button>
+        </div>
+      </div>
     </header>
+
+    <!-- Floating Back to Home Button (visible when not on first view) -->
+    <button id="back-home-btn" onclick="goBackHome()" class="hidden fixed bottom-6 left-4 z-40 flex items-center gap-2 px-4 py-2.5 rounded-full bg-tierra-800/95 hover:bg-tierra-700 text-crema border border-tierra-600 shadow-xl backdrop-blur-md text-sm font-semibold transition-all">
+      <i data-lucide="arrow-left" class="w-4 h-4 text-dorado"></i>
+      <span>Inicio</span>
+    </button>
 
     <!-- App Views Wrapper -->
     <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
