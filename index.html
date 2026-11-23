@@ -1,0 +1,896 @@
+<!DOCTYPE html>
+<html lang="es" class="dark">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Arcana • La Guía Definitiva para Leer el Tarot</title>
+  <!-- Tailwind CSS CDN -->
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script>
+    tailwind.config = {
+      darkMode: 'class',
+      theme: {
+        extend: {
+          colors: {
+            tierra: {
+              950: '#110C09',
+              900: '#18110D',
+              800: '#251A14',
+              700: '#3A291F',
+              600: '#5C4132',
+              500: '#926B47', // Marrón tierra oficial
+              400: '#B28860',
+              300: '#CCA783'
+            },
+            dorado: {
+              DEFAULT: '#F3CC6C', // Dorado oficial
+              light: '#F8DC93',
+              dark: '#D9B04D'
+            },
+            crema: {
+              DEFAULT: '#F0E0CA', // Crema suave oficial
+              light: '#FAF3EB',
+              dark: '#DECAAF'
+            },
+            beige: {
+              DEFAULT: '#D7BFA2', // Beige cálido oficial
+              light: '#E6D5C0',
+              dark: '#C0A584'
+            }
+          }
+        }
+      }
+    }
+  </script>
+  <!-- Lucide Icons -->
+  <script src="https://unpkg.com/lucide@latest"></script>
+  
+  <!-- Firebase SDKs (Google) - Compatible con el sistema de Blue -->
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-database-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/9.22.0/firebase-auth-compat.js"></script>
+  
+  <!-- Custom Stylesheet -->
+  <link rel="stylesheet" href="css/style.css">
+</head>
+<body class="bg-tierra-950 text-crema min-h-screen relative selection:bg-dorado selection:text-tierra-950">
+
+  <!-- Interactive Cosmic Canvas Background -->
+  <canvas id="cosmic-canvas"></canvas>
+
+  <!-- Main Container -->
+  <div class="relative z-10 flex flex-col min-h-screen">
+
+    <!-- Top Navigation Header -->
+    <header class="border-b border-tierra-700/60 bg-tierra-900/90 backdrop-blur-md sticky top-0 z-40">
+      <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+        <div class="flex items-center justify-between h-16 sm:h-20">
+          
+          <!-- Logo & Brand -->
+          <div class="flex items-center gap-3 cursor-pointer" onclick="location.reload()">
+            <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-tierra-500 via-dorado to-crema p-[1.5px] shadow-lg shadow-dorado/20">
+              <div class="w-full h-full bg-tierra-950 rounded-[10px] flex items-center justify-center">
+                <span class="text-xl">✨</span>
+              </div>
+            </div>
+            <div>
+              <div class="flex items-center gap-2">
+                <span class="text-xl sm:text-2xl font-serif font-black tracking-wider text-crema">ARCANA</span>
+                <span class="text-[10px] uppercase tracking-widest px-1.5 py-0.5 rounded bg-dorado/15 text-dorado border border-dorado/40 font-semibold">TarotLab</span>
+              </div>
+              <p class="text-[11px] text-beige font-sans hidden sm:block">Aprende el Tarot a través de la Conciencia y las Fórmulas</p>
+            </div>
+          </div>
+
+          <!-- Quick Actions & Auth -->
+          <div class="flex items-center gap-2 sm:gap-3">
+            
+            <!-- User Profile / Register Button -->
+            <button id="auth-guest-btn" onclick="openAuthModal('register')" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-dorado/15 hover:bg-dorado/25 text-dorado border border-dorado/40 text-xs font-bold transition-all shadow-sm">
+              <i data-lucide="user-plus" class="w-3.5 h-3.5"></i>
+              <span class="hidden sm:inline">Crear Cuenta</span>
+              <span class="sm:hidden">Entrar</span>
+            </button>
+
+            <button id="auth-user-pill" onclick="openProfileModal()" class="hidden inline-flex items-center gap-2 px-3 py-1.5 rounded-lg bg-tierra-800/90 hover:bg-tierra-700 text-crema border border-tierra-600 text-xs font-bold transition-all">
+              <span class="w-2 h-2 rounded-full bg-dorado animate-pulse"></span>
+              <span id="auth-user-name" class="truncate max-w-[100px]">Mi Perfil</span>
+              <i data-lucide="chevron-down" class="w-3 h-3 text-dorado"></i>
+            </button>
+
+            <!-- Backup & Notes -->
+            <button onclick="document.getElementById('backup-modal').classList.remove('hidden')" title="Copia de seguridad y migración" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tierra-800/80 hover:bg-tierra-700 text-crema border border-tierra-700 text-xs font-semibold transition-all">
+              <i data-lucide="cloud" class="w-3.5 h-3.5 text-dorado"></i>
+              <span class="hidden md:inline">Mis Notas</span>
+            </button>
+
+            <!-- Cheat Sheet -->
+            <button onclick="document.querySelector('.nav-tab[data-view=\'view-cheatsheet\']').click()" class="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-tierra-800/80 hover:bg-tierra-700 text-beige border border-tierra-700 text-xs font-semibold transition-all">
+              <i data-lucide="file-text" class="w-3.5 h-3.5 text-dorado"></i>
+              <span class="hidden lg:inline">Chuleta Rápida</span>
+            </button>
+
+            <!-- Spread Simulator -->
+            <button onclick="document.querySelector('.nav-tab[data-view=\'view-spread\']').click()" class="btn-gold inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-lg text-xs font-bold uppercase tracking-wider transition-all">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>Tirada</span>
+            </button>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- Navigation Tabs Bar -->
+      <nav class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 overflow-x-auto no-scrollbar border-t border-tierra-800">
+        <div class="flex space-x-1 sm:space-x-2 py-2 min-w-max" role="tablist">
+          
+          <button class="nav-tab nav-tab-active flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium border border-transparent transition-all" data-view="view-journey" role="tab" aria-selected="true">
+            <i data-lucide="compass" class="w-4 h-4 text-dorado"></i>
+            <span>El Viaje del Loco (3 Septenarios)</span>
+          </button>
+
+          <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-formula" role="tab" aria-selected="false">
+            <i data-lucide="flask-conical" class="w-4 h-4 text-dorado"></i>
+            <span>Laboratorio de Fórmulas</span>
+          </button>
+
+          <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-cards" role="tab" aria-selected="false">
+            <i data-lucide="layers" class="w-4 h-4 text-dorado"></i>
+            <span>Enciclopedia (78 Cartas)</span>
+          </button>
+
+          <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-visual" role="tab" aria-selected="false">
+            <i data-lucide="eye" class="w-4 h-4 text-dorado"></i>
+            <span>¿Qué Ven Tus Ojos?</span>
+          </button>
+
+          <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-spread" role="tab" aria-selected="false">
+            <i data-lucide="layout-grid" class="w-4 h-4 text-dorado"></i>
+            <span>Mesa de Tiradas</span>
+          </button>
+
+          <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-quiz" role="tab" aria-selected="false">
+            <i data-lucide="graduation-cap" class="w-4 h-4 text-dorado"></i>
+            <span>Entrenador / Flashcards</span>
+          </button>
+
+          <button class="nav-tab flex items-center gap-2 px-3.5 py-2 rounded-xl text-xs sm:text-sm font-medium text-beige hover:text-crema border border-transparent transition-all" data-view="view-cheatsheet" role="tab" aria-selected="false">
+            <i data-lucide="scroll" class="w-4 h-4 text-dorado"></i>
+            <span>Chuleta del Aprendiz</span>
+          </button>
+
+        </div>
+      </nav>
+    </header>
+
+    <!-- App Views Wrapper -->
+    <main class="flex-1 max-w-7xl w-full mx-auto px-4 sm:px-6 lg:px-8 py-6 sm:py-8">
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 1: EL VIAJE DEL LOCO (Arcanos Mayores en 3 Septenarios)              -->
+      <!-- ========================================================================= -->
+      <div id="view-journey" class="app-view space-y-8">
+        
+        <!-- Hero Pedagogical Banner in Warm Palette -->
+        <div class="tarot-glass rounded-3xl p-6 sm:p-10 border border-tierra-600/60 relative overflow-hidden">
+          <div class="absolute -right-20 -top-20 w-80 h-80 bg-dorado/10 rounded-full blur-3xl pointer-events-none"></div>
+          
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-dorado/15 text-dorado border border-dorado/40 mb-4">
+              <i data-lucide="map" class="w-3.5 h-3.5"></i>
+              <span>Estructura Maestra de los 22 Arcanos Mayores</span>
+            </div>
+            
+            <h2 class="text-3xl sm:text-5xl font-serif font-black text-crema leading-tight">
+              El Viaje del Loco: Los Tres Niveles de Conciencia
+            </h2>
+            
+            <p class="text-beige text-sm sm:text-base mt-4 leading-relaxed">
+              En lugar de ver 22 cartas sueltas, míralas en <strong class="text-dorado">tres niveles de conciencia de 7 cartas cada uno</strong>, más El Loco como el alma libre que inicia la travesía.
+            </p>
+
+            <div class="grid grid-cols-1 sm:grid-cols-3 gap-3 mt-6">
+              <div class="p-4 rounded-xl bg-tierra-900/90 border border-tierra-700/80">
+                <span class="text-xs font-bold text-dorado block font-serif">Septenario 1 (I al VII)</span>
+                <span class="text-[12px] text-crema mt-1 block">El plano terrenal, el ego y el desarrollo personal.</span>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900/90 border border-tierra-700/80">
+                <span class="text-xs font-bold text-crema block font-serif">Septenario 2 (VIII al XIV)</span>
+                <span class="text-[12px] text-beige mt-1 block">El viaje interior, el alma, el inconsciente y las crisis de madurez.</span>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900/90 border border-tierra-700/80">
+                <span class="text-xs font-bold text-tierra-400 block font-serif">Septenario 3 (XV al XXI)</span>
+                <span class="text-[12px] text-beige mt-1 block">Las pruebas espirituales, la sombra, la caída de falsedades y la liberación.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 0. El Loco Banner -->
+        <div id="fool-banner-container"></div>
+
+        <!-- 3 Septenaries Cards Grid Container -->
+        <div id="journey-cards-container" class="space-y-10"></div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 2: LABORATORIO DE FÓRMULAS INTERACTIVO                              -->
+      <!-- ========================================================================= -->
+      <div id="view-formula" class="app-view hidden space-y-8">
+        
+        <div class="tarot-glass rounded-3xl p-6 sm:p-10 border border-tierra-600/60">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-dorado/15 text-dorado border border-dorado/40 mb-3">
+              <i data-lucide="sparkles" class="w-3.5 h-3.5"></i>
+              <span>El Método Intuitivo del Aprendiz</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-serif font-black text-crema">
+              Laboratorio de Fórmulas: La Ecuación Maestra
+            </h2>
+            <p class="text-beige text-sm sm:text-base mt-2 leading-relaxed">
+              Cualquier carta menor se decodifica al instante resolviendo dos preguntas:
+              <strong class="text-dorado">1. ¿Qué Elemento es?</strong> (el área de la vida) + <strong class="text-dorado">2. ¿Qué Número o Corte es?</strong> (la fase o actitud).
+            </p>
+          </div>
+
+          <!-- Formula Step 1: Select Element / Suit -->
+          <div class="mt-8 pt-6 border-t border-tierra-800">
+            <h3 class="text-xs font-bold uppercase tracking-wider text-dorado mb-3 flex items-center gap-2">
+              <span class="w-5 h-5 rounded-full bg-dorado text-tierra-950 flex items-center justify-center text-[10px] font-black">1</span>
+              <span>PASO 1: ¿QUÉ ELEMENTO ES? (El área de la vida)</span>
+            </h3>
+
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+              
+              <!-- Bastos -->
+              <button class="formula-suit-btn ring-2 ring-dorado bg-tierra-800 text-left p-4 rounded-2xl border border-tierra-600 transition-all flex flex-col justify-between" data-suit="bastos">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">🔥</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-orange-500/20 text-orange-300 border border-orange-500/30">FUEGO</span>
+                  </div>
+                  <h4 class="text-lg font-serif font-bold text-crema">Bastos</h4>
+                  <p class="text-xs text-beige mt-2 leading-relaxed">
+                    <strong>Ganas, entusiasmo, pasión, trabajo, impulso, acción.</strong>
+                  </p>
+                </div>
+              </button>
+
+              <!-- Copas -->
+              <button class="formula-suit-btn text-left p-4 rounded-2xl bg-tierra-900/80 border border-tierra-700/80 hover:border-dorado transition-all flex flex-col justify-between" data-suit="copas">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">💧</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-blue-500/20 text-blue-300 border border-blue-500/30">AGUA</span>
+                  </div>
+                  <h4 class="text-lg font-serif font-bold text-crema">Copas</h4>
+                  <p class="text-xs text-beige mt-2 leading-relaxed">
+                    <strong>Sentimientos, amor, vínculos, intuición, duelos.</strong>
+                  </p>
+                </div>
+              </button>
+
+              <!-- Espadas -->
+              <button class="formula-suit-btn text-left p-4 rounded-2xl bg-tierra-900/80 border border-tierra-700/80 hover:border-dorado transition-all flex flex-col justify-between" data-suit="espadas">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">💨</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-purple-500/20 text-purple-300 border border-purple-500/30">AIRE</span>
+                  </div>
+                  <h4 class="text-lg font-serif font-bold text-crema">Espadas</h4>
+                  <p class="text-xs text-beige mt-2 leading-relaxed">
+                    <strong>Pensamientos, dudas, verdades, discusiones, ideas, intelecto, estrategias.</strong>
+                  </p>
+                </div>
+              </button>
+
+              <!-- Oros -->
+              <button class="formula-suit-btn text-left p-4 rounded-2xl bg-tierra-900/80 border border-tierra-700/80 hover:border-dorado transition-all flex flex-col justify-between" data-suit="oros">
+                <div>
+                  <div class="flex items-center justify-between mb-2">
+                    <span class="text-2xl">🌿</span>
+                    <span class="text-[10px] font-bold uppercase tracking-wider px-2 py-0.5 rounded bg-tierra-600/40 text-dorado border border-tierra-500">TIERRA</span>
+                  </div>
+                  <h4 class="text-lg font-serif font-bold text-crema">Oros</h4>
+                  <p class="text-xs text-beige mt-2 leading-relaxed">
+                    <strong>Dinero, cuerpo, casa, seguridad material, salud y recursos.</strong>
+                  </p>
+                </div>
+              </button>
+
+            </div>
+          </div>
+
+          <!-- Formula Step 2: Select Mode -->
+          <div class="mt-8 pt-6 border-t border-tierra-800">
+            <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-3 mb-4">
+              <h3 class="text-xs font-bold uppercase tracking-wider text-dorado flex items-center gap-2">
+                <span class="w-5 h-5 rounded-full bg-dorado text-tierra-950 flex items-center justify-center text-[10px] font-black">2</span>
+                <span>PASO 2: ¿QUÉ NÚMERO O CORTE ES?</span>
+              </h3>
+
+              <!-- Mode Toggle -->
+              <div class="inline-flex rounded-xl bg-tierra-900 p-1 border border-tierra-800">
+                <button class="formula-mode-btn px-3 py-1 rounded-lg text-xs font-semibold bg-dorado/20 text-dorado border border-dorado/40 transition-all" data-mode="number">
+                  Números (1 al 10: La Fase)
+                </button>
+                <button class="formula-mode-btn px-3 py-1 rounded-lg text-xs font-semibold text-beige border border-transparent transition-all" data-mode="court">
+                  Cortes (Sota, Caballo, Reina, Rey)
+                </button>
+              </div>
+            </div>
+
+            <!-- Numbers 1 to 10 Selector -->
+            <div id="formula-number-selector" class="grid grid-cols-2 sm:grid-cols-5 lg:grid-cols-10 gap-2">
+              <button class="formula-num-chip bg-dorado text-tierra-950 font-bold p-2.5 rounded-xl text-center text-xs transition-all" data-number="1">
+                <span class="block text-base font-serif">1 (As)</span>
+                <span class="text-[9px] uppercase tracking-wider block opacity-90">Inicio</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="2">
+                <span class="block text-base font-serif">2</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Elección</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="3">
+                <span class="block text-base font-serif">3</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Expansión</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="4">
+                <span class="block text-base font-serif">4</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Estabilidad</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="5">
+                <span class="block text-base font-serif">5</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Crisis</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="6">
+                <span class="block text-base font-serif">6</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Alivio</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="7">
+                <span class="block text-base font-serif">7</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Prueba</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="8">
+                <span class="block text-base font-serif">8</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Esfuerzo</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="9">
+                <span class="block text-base font-serif">9</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Cosecha</span>
+              </button>
+
+              <button class="formula-num-chip bg-tierra-900 text-crema p-2.5 rounded-xl text-center text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-number="10">
+                <span class="block text-base font-serif">10</span>
+                <span class="text-[9px] uppercase tracking-wider block text-beige">Fin Ciclo</span>
+              </button>
+            </div>
+
+            <!-- Court Selector (Hidden by default) -->
+            <div id="formula-court-selector" class="hidden grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <button class="formula-court-chip bg-dorado text-tierra-950 font-bold p-3.5 rounded-xl text-left text-xs transition-all" data-court="sota">
+                <span class="text-sm font-serif font-black block">1. SOTA</span>
+                <span class="text-[11px] block opacity-90 mt-0.5">El Aprendiz / Semilla / Mensajero</span>
+                <span class="text-[10px] block opacity-80 mt-1">Curiosidad, entusiasmo juvenil, sin experiencia pero con ganas.</span>
+              </button>
+
+              <button class="formula-court-chip bg-tierra-900 text-crema p-3.5 rounded-xl text-left text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-court="caballo">
+                <span class="text-sm font-serif font-black block">2. CABALLO</span>
+                <span class="text-[11px] block text-dorado mt-0.5">El Conquistador / Movimiento</span>
+                <span class="text-[10px] block text-beige mt-1">Impulso, avance veloz, salir a buscar algo, dinamismo.</span>
+              </button>
+
+              <button class="formula-court-chip bg-tierra-900 text-crema p-3.5 rounded-xl text-left text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-court="reina">
+                <span class="text-sm font-serif font-black block">3. REINA</span>
+                <span class="text-[11px] block text-dorado mt-0.5">La Maestra Interior / Contención</span>
+                <span class="text-[10px] block text-beige mt-1">Sabiduría emocional hacia adentro, nutre, sostiene y protege.</span>
+              </button>
+
+              <button class="formula-court-chip bg-tierra-900 text-crema p-3.5 rounded-xl text-left text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-court="rey">
+                <span class="text-sm font-serif font-black block">4. REY</span>
+                <span class="text-[11px] block text-dorado mt-0.5">El Líder / Autoridad / Dominio</span>
+                <span class="text-[10px] block text-beige mt-1">Control, estructura, orden y toma de decisiones hacia afuera.</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Formula Output Card Container -->
+          <div id="formula-result-card" class="mt-8 rounded-2xl tarot-glass border-2 border-dorado/50 overflow-hidden shadow-2xl"></div>
+
+        </div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 3: ENCICLOPEDIA COMPLETA (78 Cartas)                                -->
+      <!-- ========================================================================= -->
+      <div id="view-cards" class="app-view hidden space-y-6">
+        
+        <!-- Search & Filter Controls -->
+        <div class="tarot-glass rounded-2xl p-5 border border-tierra-700/80 space-y-4">
+          <div class="flex flex-col md:flex-row items-stretch md:items-center justify-between gap-4">
+            
+            <!-- Search Bar -->
+            <div class="relative flex-1">
+              <i data-lucide="search" class="w-4 h-4 absolute left-3.5 top-1/2 -translate-y-1/2 text-tierra-400"></i>
+              <input type="text" id="search-input" placeholder="Buscar por nombre, palabra clave (ej: amor, duelo, dinero, espada, torre)..." class="w-full bg-tierra-950 border border-tierra-700 rounded-xl pl-10 pr-4 py-2.5 text-xs sm:text-sm text-crema placeholder-tierra-400 focus:outline-none focus:border-dorado transition-colors">
+            </div>
+
+            <!-- Counter Badge -->
+            <div class="flex items-center gap-2">
+              <span id="cards-count-badge" class="px-3 py-1.5 rounded-lg bg-dorado/15 text-dorado border border-dorado/30 text-xs font-semibold">
+                78 cartas
+              </span>
+            </div>
+
+          </div>
+
+          <!-- Filter Chips -->
+          <div class="flex flex-wrap gap-1.5 sm:gap-2 pt-2 border-t border-tierra-800">
+            <button class="encyclo-filter-chip bg-dorado text-tierra-950 font-bold px-3 py-1 rounded-lg text-xs transition-all" data-filter="all">Todos (78)</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="major">Mayores (22)</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="sep1">Septenario 1</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="sep2">Septenario 2</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="sep3">Septenario 3</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="bastos">🔥 Bastos</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="copas">💧 Copas</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="espadas">💨 Espadas</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="oros">🌿 Oros</button>
+            <button class="encyclo-filter-chip bg-tierra-900 text-crema px-3 py-1 rounded-lg text-xs hover:bg-tierra-800 border border-tierra-800 transition-all" data-filter="courts">👑 Cortes (16)</button>
+          </div>
+        </div>
+
+        <!-- Cards Grid -->
+        <div id="cards-grid-container" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-4"></div>
+
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 4: ¿QUÉ VEN TUS OJOS LITERALES? (Guía Visual)                       -->
+      <!-- ========================================================================= -->
+      <div id="view-visual" class="app-view hidden space-y-8">
+        <div class="tarot-glass rounded-3xl p-6 sm:p-10 border border-tierra-600/60">
+          <div class="max-w-3xl">
+            <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-dorado/15 text-dorado border border-dorado/40 mb-3">
+              <i data-lucide="eye" class="w-3.5 h-3.5"></i>
+              <span>El Tercer Paso del Aprendiz</span>
+            </div>
+            <h2 class="text-3xl sm:text-4xl font-serif font-black text-crema">
+              3. ¿Qué Está Haciendo el Dibujo? (Lo que ven tus ojos literales)
+            </h2>
+            <p class="text-beige text-sm sm:text-base mt-2 leading-relaxed">
+              Antes de abrir un libro, <strong>mira la carta como si fuera una escena viva</strong>. Tu mente ya comprende las posturas corporales, las miradas y los gestos humanos. 
+            </p>
+          </div>
+
+          <div class="grid grid-cols-1 md:grid-cols-2 gap-4 sm:gap-6 mt-8">
+            <div class="p-6 rounded-2xl bg-tierra-900/90 border border-tierra-700/80 space-y-3">
+              <div class="flex items-center gap-3 text-dorado font-serif font-bold text-lg">
+                <span class="w-8 h-8 rounded-full bg-dorado/20 flex items-center justify-center text-sm">🛌</span>
+                <span>¿Está descansando o detenido?</span>
+              </div>
+              <p class="text-xs sm:text-sm text-crema leading-relaxed">
+                Ejemplo: En el <strong>4 de Espadas</strong> el caballero yace en descanso; en <strong>El Colgado</strong> pende voluntariamente boca abajo.
+              </p>
+              <div class="p-3 rounded-lg bg-dorado/10 border border-dorado/30 text-xs text-dorado">
+                <strong>Significado intuitivo:</strong> Pausa obligada, tregua, descanso mental, no forzar las cosas.
+              </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-tierra-900/90 border border-tierra-700/80 space-y-3">
+              <div class="flex items-center gap-3 text-orange-300 font-serif font-bold text-lg">
+                <span class="w-8 h-8 rounded-full bg-orange-500/20 flex items-center justify-center text-sm">🏇</span>
+                <span>¿Está corriendo o a la carga?</span>
+              </div>
+              <p class="text-xs sm:text-sm text-crema leading-relaxed">
+                Ejemplo: En el <strong>Caballo de Espadas</strong> el corcel galopa a toda velocidad en tormenta; en el <strong>Caballo de Bastos</strong> salta enérgico.
+              </p>
+              <div class="p-3 rounded-lg bg-orange-500/10 border border-orange-500/30 text-xs text-orange-200">
+                <strong>Significado intuitivo:</strong> Impulso imparable, prisa, riesgo de precipitación, defender una causa sin mirar atrás.
+              </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-tierra-900/90 border border-tierra-700/80 space-y-3">
+              <div class="flex items-center gap-3 text-blue-300 font-serif font-bold text-lg">
+                <span class="w-8 h-8 rounded-full bg-blue-500/20 flex items-center justify-center text-sm">😢</span>
+                <span>¿Está llorando o lamentándose?</span>
+              </div>
+              <p class="text-xs sm:text-sm text-crema leading-relaxed">
+                Ejemplo: En el <strong>5 de Copas</strong> el personaje mira tres copas volcadas dándole la espalda a las dos intactas.
+              </p>
+              <div class="p-3 rounded-lg bg-blue-500/10 border border-blue-500/30 text-xs text-blue-200">
+                <strong>Significado intuitivo:</strong> Duelo, dolor por lo que se perdió, pero con el recordatorio de que no todo se ha arruinado.
+              </div>
+            </div>
+
+            <div class="p-6 rounded-2xl bg-tierra-900/90 border border-tierra-700/80 space-y-3">
+              <div class="flex items-center gap-3 text-tierra-300 font-serif font-bold text-lg">
+                <span class="w-8 h-8 rounded-full bg-tierra-500/30 flex items-center justify-center text-sm">🛡️</span>
+                <span>¿Está vigilando o defendiendo su posición?</span>
+              </div>
+              <p class="text-xs sm:text-sm text-crema leading-relaxed">
+                Ejemplo: En el <strong>7 de Bastos</strong> lucha solo en la cima de una colina; en el <strong>9 de Bastos</strong> el soldado vigila la empalizada.
+              </p>
+              <div class="p-3 rounded-lg bg-tierra-500/20 border border-tierra-500/40 text-xs text-crema">
+                <strong>Significado intuitivo:</strong> Resiliencia, guardia alta, mantenerte firme ante las críticas o competencia.
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 5: MESA DE TIRADAS INTERACTIVA                                       -->
+      <!-- ========================================================================= -->
+      <div id="view-spread" class="app-view hidden space-y-8">
+        <div class="tarot-glass rounded-3xl p-6 sm:p-10 border border-tierra-600/60">
+          <div class="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-tierra-800 pb-6">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-dorado/15 text-dorado border border-dorado/40 mb-2">
+                <i data-lucide="layout-grid" class="w-3.5 h-3.5"></i>
+                <span>Simulador Práctico</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-serif font-black text-crema">
+                Mesa de Tiradas del Aprendiz
+              </h2>
+              <p class="text-xs sm:text-sm text-beige mt-1">
+                Practica tiradas reales con volteo 3D e interpretación guiada por la fórmula del estudiante.
+              </p>
+            </div>
+
+            <div class="flex flex-wrap items-center gap-3">
+              <select id="spread-type-select" class="bg-tierra-900 border border-tierra-700 text-crema text-xs sm:text-sm rounded-xl px-3 py-2 focus:outline-none focus:border-dorado">
+                <option value="one">1 Carta: Carta del Día / Consejo Instantáneo</option>
+                <option value="three-time">3 Cartas: Pasado • Presente • Futuro</option>
+                <option value="three-challenge">3 Cartas: Situación • Desafío • Consejo</option>
+                <option value="septenaries">3 Cartas: Los Tres Septenarios de Conciencia</option>
+              </select>
+
+              <button id="deal-cards-btn" class="btn-gold px-5 py-2.5 rounded-xl font-bold text-xs uppercase tracking-wider flex items-center gap-2">
+                <i data-lucide="shuffle" class="w-4 h-4"></i>
+                <span>Barajar y Tirar Cartas</span>
+              </button>
+            </div>
+          </div>
+
+          <!-- Cards Layout Area -->
+          <div id="spread-cards-container" class="my-10 flex flex-wrap justify-center items-center gap-6 md:gap-10 min-h-[300px]">
+            <div class="text-center py-12 text-beige">
+              <i data-lucide="sparkles" class="w-10 h-10 mx-auto mb-3 text-dorado/40"></i>
+              <p class="text-sm font-medium">Selecciona un tipo de tirada y presiona "Barajar y Tirar Cartas".</p>
+            </div>
+          </div>
+
+          <!-- Interactive Interpretation Analysis -->
+          <div id="spread-analysis-container"></div>
+        </div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 6: ENTRENADOR Y FLASHCARDS (Tarot Gym)                              -->
+      <!-- ========================================================================= -->
+      <div id="view-quiz" class="app-view hidden space-y-8">
+        <div class="tarot-glass rounded-3xl p-6 sm:p-10 border border-tierra-600/60 text-center max-w-3xl mx-auto">
+          <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-dorado/15 text-dorado border border-dorado/40 mb-3">
+            <i data-lucide="award" class="w-3.5 h-3.5"></i>
+            <span>Gimnasio del Tarot</span>
+          </div>
+          <h2 class="text-3xl sm:text-4xl font-serif font-black text-crema">
+            Entrena tu Intuición y Fórmulas
+          </h2>
+          <p class="text-beige text-sm sm:text-base mt-2 leading-relaxed">
+            Ponte a prueba con preguntas dinámicas sobre los 3 Septenarios, las fórmulas de los 4 Elementos + Números, la actitud de las Cortes y la observación visual del dibujo.
+          </p>
+
+          <div class="mt-6">
+            <button id="start-quiz-btn" class="btn-gold px-6 py-3 rounded-xl uppercase tracking-wider text-xs inline-flex items-center gap-2">
+              <i data-lucide="play" class="w-4 h-4"></i>
+              <span>Comenzar Entrenamiento</span>
+            </button>
+          </div>
+        </div>
+
+        <div id="quiz-container"></div>
+      </div>
+
+      <!-- ========================================================================= -->
+      <!-- VIEW 7: LA CHULETA DEL APRENDIZ (Cheat Sheet)                            -->
+      <!-- ========================================================================= -->
+      <div id="view-cheatsheet" class="app-view hidden space-y-8">
+        <div class="tarot-glass rounded-3xl p-6 sm:p-10 border border-tierra-600/60">
+          <div class="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-b border-tierra-800 pb-5">
+            <div>
+              <div class="inline-flex items-center gap-2 px-3 py-1 rounded-full text-xs font-semibold bg-dorado/15 text-dorado border border-dorado/40 mb-2">
+                <i data-lucide="file-text" class="w-3.5 h-3.5"></i>
+                <span>Referencia Rápida para Consultas Reales</span>
+              </div>
+              <h2 class="text-2xl sm:text-3xl font-serif font-black text-crema">
+                La Chuleta Maestra del Aprendiz
+              </h2>
+              <p class="text-xs sm:text-sm text-beige mt-1">
+                Imprime o ten abierta esta pantalla cuando hagas lecturas con cartas físicas en tu mesa.
+              </p>
+            </div>
+            <button onclick="window.print()" class="no-print inline-flex items-center gap-2 px-4 py-2 rounded-xl bg-tierra-800 hover:bg-tierra-700 text-crema text-xs font-semibold border border-tierra-700 transition-colors self-start sm:self-auto">
+              <i data-lucide="printer" class="w-4 h-4 text-dorado"></i>
+              <span>Imprimir / Guardar PDF</span>
+            </button>
+          </div>
+
+          <!-- Section A: 3 Septenarios -->
+          <div class="mt-8 space-y-4">
+            <h3 class="text-lg font-serif font-bold text-dorado flex items-center gap-2">
+              <span>🧭 1. Arcanos Mayores: Los Tres Septenarios</span>
+            </h3>
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <span class="text-xs font-bold text-dorado block uppercase font-serif">Septenario 1 (I al VII)</span>
+                <p class="text-xs text-crema font-medium mt-1">El plano terrenal, el ego y el desarrollo personal.</p>
+                <p class="text-[11px] text-beige mt-2">Mago, Sacerdotisa, Emperatriz, Emperador, Sumo Sacerdote, Enamorados, Carro.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <span class="text-xs font-bold text-crema block uppercase font-serif">Septenario 2 (VIII al XIV)</span>
+                <p class="text-xs text-crema font-medium mt-1">El viaje interior, el alma, el inconsciente y las crisis de madurez.</p>
+                <p class="text-[11px] text-beige mt-2">Fuerza, Ermitaño, Rueda de la Fortuna, Justicia, Colgado, Muerte, Templanza.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <span class="text-xs font-bold text-tierra-400 block uppercase font-serif">Septenario 3 (XV al XXI)</span>
+                <p class="text-xs text-crema font-medium mt-1">Las pruebas espirituales, la sombra, la caída de falsedades y la liberación.</p>
+                <p class="text-[11px] text-beige mt-2">Diablo, Torre, Estrella, Luna, Sol, Juicio, Mundo.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section B: 4 Elementos -->
+          <div class="mt-8 space-y-4">
+            <h3 class="text-lg font-serif font-bold text-dorado flex items-center gap-2">
+              <span>🔥 2. ¿Qué Elemento es? (El área de la vida)</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3">
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <strong class="text-orange-300 block text-sm">🔥 Bastos (Fuego)</strong>
+                <p class="text-xs text-crema mt-1 leading-relaxed">Ganas, entusiasmo, pasión, trabajo, impulso, acción.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <strong class="text-blue-300 block text-sm">💧 Copas (Agua)</strong>
+                <p class="text-xs text-crema mt-1 leading-relaxed">Sentimientos, amor, vínculos, intuición, duelos.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <strong class="text-purple-300 block text-sm">💨 Espadas (Aire)</strong>
+                <p class="text-xs text-crema mt-1 leading-relaxed">Pensamientos, dudas, verdades, discusiones, ideas, intelecto, palabras, estrategias.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+                <strong class="text-dorado block text-sm">🌿 Oros (Tierra)</strong>
+                <p class="text-xs text-crema mt-1 leading-relaxed">Dinero, cuerpo, casa, seguridad material, salud.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section C: 10 Números -->
+          <div class="mt-8 space-y-4">
+            <h3 class="text-lg font-serif font-bold text-dorado flex items-center gap-2">
+              <span>🔢 3. ¿Qué Número es? (La fase del proceso)</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-5 gap-3">
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">1 (As) = Inicio / Semilla</strong>
+                <p class="text-[11px] text-beige mt-1">El potencial puro, la chispa fundacional.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">2 = Elección / Duda</strong>
+                <p class="text-[11px] text-beige mt-1">Dualidad, encrucijada, planificación entre opciones.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">3 = Expansión / Fruto</strong>
+                <p class="text-[11px] text-beige mt-1">Primeros resultados, trabajo coordinado, crecimiento.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">4 = Estabilidad / Pausa</strong>
+                <p class="text-[11px] text-beige mt-1">Cimientos sólidos, orden, posible estancamiento.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">5 = Crisis / Conflicto</strong>
+                <p class="text-[11px] text-beige mt-1">Pérdida de equilibrio, prueba necesaria, choque.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">6 = Alivio / Transición</strong>
+                <p class="text-[11px] text-beige mt-1">Recuperación tras la tormenta, intercambio justo.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">7 = Prueba / Evaluación</strong>
+                <p class="text-[11px] text-beige mt-1">Evaluar lo logrado, perseverancia o estrategia.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">8 = Esfuerzo / Movimiento</strong>
+                <p class="text-[11px] text-beige mt-1">Dedicación constante, aceleración de hechos.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">9 = Cosecha / Soledad</strong>
+                <p class="text-[11px] text-beige mt-1">Madurez íntima del proceso, culminación personal.</p>
+              </div>
+              <div class="p-3 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado text-xs block">10 = Fin de ciclo / Límite</strong>
+                <p class="text-[11px] text-beige mt-1">Saturación de la energía, cierre inevitable.</p>
+              </div>
+            </div>
+          </div>
+
+          <!-- Section D: 4 Cortes -->
+          <div class="mt-8 space-y-4">
+            <h3 class="text-lg font-serif font-bold text-dorado flex items-center gap-2">
+              <span>👑 4. Las Cartas de la Corte (Actitud y Nivel de Madurez)</span>
+            </h3>
+            <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado block text-sm font-serif">1. SOTA</strong>
+                <span class="text-xs text-crema font-semibold block mt-0.5">El Aprendiz / Semilla / Mensajero</span>
+                <p class="text-xs text-beige mt-2 leading-relaxed">Curiosidad, entusiasmo juvenil, empezar a aprender algo, mensajes o noticias nuevas. Sin experiencia, pero con ganas.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado block text-sm font-serif">2. CABALLO</strong>
+                <span class="text-xs text-crema font-semibold block mt-0.5">El Conquistador / Movimiento / Acción</span>
+                <p class="text-xs text-beige mt-2 leading-relaxed">Impulso, avance veloz, salir a buscar algo, dinamismo. Puede pecar de impaciente o precipitado, pero pone las cosas a rodar.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado block text-sm font-serif">3. REINA</strong>
+                <span class="text-xs text-crema font-semibold block mt-0.5">La Maestra Interior / Contención</span>
+                <p class="text-xs text-beige mt-2 leading-relaxed">Sabiduría emocional y profunda hacia adentro. Nutre, sostiene, protege y comprende esa energía con empatía y serenidad.</p>
+              </div>
+              <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-800">
+                <strong class="text-dorado block text-sm font-serif">4. REY</strong>
+                <span class="text-xs text-crema font-semibold block mt-0.5">El Líder / Autoridad / Dominio Externo</span>
+                <p class="text-xs text-beige mt-2 leading-relaxed">Control, estructura, toma de decisiones y orden hacia el mundo exterior. Manda, organiza y asume la responsabilidad final.</p>
+              </div>
+            </div>
+          </div>
+
+        </div>
+      </div>
+
+    </main>
+
+    <!-- Global Study Card Modal -->
+    <div id="card-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tierra-950/85 backdrop-blur-md hidden">
+      <div class="relative w-full max-w-3xl tarot-glass rounded-3xl border-2 border-dorado/50 shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-200">
+        <div id="card-modal-content"></div>
+      </div>
+    </div>
+
+    <!-- Backup & Sync Modal -->
+    <div id="backup-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tierra-950/85 backdrop-blur-md hidden">
+      <div class="relative w-full max-w-md tarot-glass rounded-3xl border-2 border-dorado/50 shadow-2xl overflow-hidden p-6 md:p-8 animate-in fade-in zoom-in-95 duration-200">
+        <div class="flex items-center justify-between border-b border-tierra-700/60 pb-4 mb-5">
+          <div class="flex items-center gap-2">
+            <i data-lucide="cloud" class="w-5 h-5 text-dorado"></i>
+            <h3 class="text-xl font-serif font-bold text-crema">Tus Notas & Privacidad</h3>
+          </div>
+          <button onclick="document.getElementById('backup-modal').classList.add('hidden')" class="w-8 h-8 rounded-full bg-tierra-800 hover:bg-tierra-700 text-crema flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <p class="text-xs text-beige leading-relaxed mb-6">
+          Tus notas se guardan de forma <strong>100% privada y permanente en la memoria de este navegador (<code class="text-dorado">localStorage</code>)</strong>. No van a servidores externos ni requieren crear cuentas obligatorias.
+        </p>
+
+        <div class="space-y-4">
+          <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+            <h4 class="text-xs font-bold text-dorado uppercase tracking-wider mb-1">Exportar Copia de Seguridad</h4>
+            <p class="text-[11px] text-beige mb-3">Descarga un archivo seguro con todas las notas que has escrito para no perderlas o pasarlas a tu celular.</p>
+            <button onclick="exportTarotNotes()" class="btn-gold w-full py-2.5 rounded-lg text-xs flex items-center justify-center gap-2 transition-colors">
+              <i data-lucide="download" class="w-4 h-4"></i>
+              <span>Descargar mis notas (.json)</span>
+            </button>
+          </div>
+
+          <div class="p-4 rounded-xl bg-tierra-900 border border-tierra-700/80">
+            <h4 class="text-xs font-bold text-crema uppercase tracking-wider mb-1">Restaurar en otro dispositivo</h4>
+            <p class="text-[11px] text-beige mb-3">Sube el archivo de notas en otro dispositivo para tener todas tus reflexiones sincronizadas.</p>
+            <label class="w-full py-2.5 rounded-lg bg-tierra-800 hover:bg-tierra-700 text-crema border border-tierra-600 font-semibold text-xs flex items-center justify-center gap-2 cursor-pointer transition-colors">
+              <i data-lucide="upload" class="w-4 h-4 text-dorado"></i>
+              <span>Seleccionar archivo (.json)</span>
+              <input type="file" accept=".json" onchange="importTarotNotes(event)" class="hidden">
+            </label>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Authentication Modal (Register / Login) -->
+    <div id="auth-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tierra-950/85 backdrop-blur-md hidden">
+      <div class="relative w-full max-w-md tarot-glass rounded-3xl border-2 border-dorado/50 shadow-2xl overflow-hidden p-6 md:p-8 animate-in fade-in zoom-in-95 duration-200">
+        
+        <div class="flex items-center justify-between border-b border-tierra-700/60 pb-4 mb-5">
+          <div class="flex items-center gap-2">
+            <span class="text-2xl">✨</span>
+            <h3 class="text-xl font-serif font-bold text-crema">Tu Cuenta de Aprendiz</h3>
+          </div>
+          <button onclick="closeAuthModal()" class="w-8 h-8 rounded-full bg-tierra-800 hover:bg-tierra-700 text-crema flex items-center justify-center">
+            <i data-lucide="x" class="w-4 h-4"></i>
+          </button>
+        </div>
+
+        <!-- Mode Tabs -->
+        <div class="grid grid-cols-2 gap-2 bg-tierra-900 p-1 rounded-xl mb-5 border border-tierra-800">
+          <button id="auth-tab-register" onclick="setAuthMode('register')" class="px-4 py-2 text-xs font-bold rounded-lg bg-dorado text-tierra-950 transition-all">
+            Crear Cuenta
+          </button>
+          <button id="auth-tab-login" onclick="setAuthMode('login')" class="px-4 py-2 text-xs font-semibold rounded-lg text-beige hover:text-crema transition-all">
+            Iniciar Sesión
+          </button>
+        </div>
+
+        <!-- Register Form -->
+        <form id="auth-form-register" onsubmit="handleRegisterSubmit(event)" class="space-y-4">
+          <div>
+            <label class="block text-xs font-semibold text-dorado mb-1">Nombre o Apodo:</label>
+            <input type="text" id="reg-name" required placeholder="Ej: Sofía" class="w-full bg-tierra-900 border border-tierra-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-crema placeholder-tierra-500 focus:outline-none focus:border-dorado">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-dorado mb-1">Correo Electrónico:</label>
+            <input type="email" id="reg-email" required placeholder="tu@correo.com" class="w-full bg-tierra-900 border border-tierra-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-crema placeholder-tierra-500 focus:outline-none focus:border-dorado">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-dorado mb-1">Contraseña:</label>
+            <input type="password" id="reg-pass" required placeholder="••••••••" class="w-full bg-tierra-900 border border-tierra-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-crema placeholder-tierra-500 focus:outline-none focus:border-dorado">
+          </div>
+
+          <p class="text-[11px] text-beige leading-relaxed">
+            Al registrarte, tus notas personales en cada carta y tu progreso de estudio se guardarán vinculados a tu perfil.
+          </p>
+
+          <button type="submit" class="btn-gold w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider mt-2">
+            Registrarme y Guardar Notas
+          </button>
+        </form>
+
+        <!-- Login Form -->
+        <form id="auth-form-login" onsubmit="handleLoginSubmit(event)" class="space-y-4 hidden">
+          <div>
+            <label class="block text-xs font-semibold text-dorado mb-1">Correo Electrónico:</label>
+            <input type="email" id="log-email" required placeholder="tu@correo.com" class="w-full bg-tierra-900 border border-tierra-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-crema placeholder-tierra-500 focus:outline-none focus:border-dorado">
+          </div>
+          <div>
+            <label class="block text-xs font-semibold text-dorado mb-1">Contraseña:</label>
+            <input type="password" id="log-pass" required placeholder="••••••••" class="w-full bg-tierra-900 border border-tierra-700 rounded-xl px-3.5 py-2.5 text-xs sm:text-sm text-crema placeholder-tierra-500 focus:outline-none focus:border-dorado">
+          </div>
+
+          <button type="submit" class="btn-gold w-full py-3 rounded-xl text-xs font-bold uppercase tracking-wider mt-2">
+            Iniciar Sesión
+          </button>
+        </form>
+
+      </div>
+    </div>
+
+    <!-- User Profile Modal -->
+    <div id="profile-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-tierra-950/85 backdrop-blur-md hidden">
+      <div class="relative w-full max-w-md tarot-glass rounded-3xl border-2 border-dorado/50 shadow-2xl overflow-hidden p-6 md:p-8 animate-in fade-in zoom-in-95 duration-200">
+        <div id="profile-modal-content"></div>
+      </div>
+    </div>
+
+    <!-- Footer in User Palette -->
+    <footer class="border-t border-tierra-800 bg-tierra-950/90 backdrop-blur-md py-6 text-center text-xs text-beige">
+      <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-2">
+        <p>ARCANA • Escuela Práctica del Tarot • "El Viaje del Loco y las Fórmulas Elementales"</p>
+        <p class="text-dorado font-medium">Diseñado con la paleta mística y cálida de Tierra y Oro</p>
+      </div>
+    </footer>
+
+  </div>
+
+  <!-- Data & Logic Scripts -->
+  <script src="data/cards.js"></script>
+  <script src="js/firebase-config.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>

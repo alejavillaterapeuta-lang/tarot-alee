@@ -1,0 +1,1395 @@
+// generate_data.js - Script to generate the comprehensive cards.js file for the Tarot Learning App
+const fs = require('fs');
+const path = require('path');
+
+const majorArcanaData = [
+  {
+    id: "el-loco",
+    number: 0,
+    roman: "0",
+    name: "El Loco",
+    arcana: "mayor",
+    septenary: 0,
+    septenaryName: "El Viajero (Punto Cero)",
+    septenaryTheme: "El alma antes de encarnar, el potencial infinito, el salto de fe.",
+    element: "Aire / Éter",
+    archetype: "El Niño Interior / El Buscador",
+    keywordsUpright: ["Inocencia", "Nuevo inicio", "Salto de fe", "Espontaneidad", "Libertad pura"],
+    keywordsReversed: ["Imprudencia", "Temeridad", "Miedo al cambio", "Parálisis", "Riesgo ciego"],
+    visualObservation: "Un joven alegre con traje floreado camina al borde de un precipicio bañado en sol, con un hatillo en un bastón, una rosa blanca en la mano izquierda y un perrito blanco saltando a su lado.",
+    whatEyesSee: "¿Qué está haciendo? Camina sin mirar hacia abajo, con la vista en el cielo y paso ligero, como si las leyes de la gravedad no le preocuparan. El perrito parece avisarle o celebrar su juego.",
+    formulaExplanation: "0 = La nada y el todo. No pertenece a ningún septenario porque es el protagonista que viaja a través de todos ellos.",
+    learningFormula: "Inocencia + Potencial Ilimitado = El salto de fe hacia la vida",
+    uprightMeaning: "Te invita a iniciar un viaje sin el lastre de viejos prejuicios. Confía en el impulso del corazón aunque la mente racional te diga que es una locura.",
+    reversedMeaning: "Cuidado con actuar sin medir las consecuencias o, por el contrario, quedarte inmóvil por miedo a cometer un error infantil.",
+    reflectiveQuestion: "¿Qué aventura postergaría mi alma si tuviera la seguridad de que no puedo fracasar?",
+    advice: "Despójate de equipaje innecesario y da el paso con alegría y ligereza.",
+    symbolism: ["Rosa blanca: Pureza del alma y ausencia de malicia", "Hatillo: Las experiencias de vidas pasadas que aún no ha abierto", "Perrito blanco: El instinto animal que protege al inocente", "Sol brillante: Gracia divina y claridad"]
+  },
+  // SEPTENARIO 1 (I al VII): El plano terrenal, el ego y el desarrollo personal
+  {
+    id: "el-mago",
+    number: 1,
+    roman: "I",
+    name: "El Mago",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "Aprender a operar en el mundo material, descubrir tus talentos y afirmar tu voluntad personal.",
+    element: "Aire / Mercurio",
+    archetype: "El Creador / El Canalizador",
+    keywordsUpright: ["Manifestación", "Poder personal", "Habilidad", "Recursos disponibles", "Voluntad enfocada"],
+    keywordsReversed: ["Manipulación", "Talento desperdiciado", "Engaño", "Falta de foco", "Ilusionismo vacío"],
+    visualObservation: "Un hombre joven de pie ante una mesa con una vara (fuego), una copa (agua), una espada (aire) y una moneda (tierra). Apunta al cielo con una varita y a la tierra con el otro brazo; sobre su cabeza brilla el símbolo del infinito.",
+    whatEyesSee: "¿Qué está haciendo? Canaliza activamente la energía del cielo hacia la tierra. Tiene todas las herramientas sobre la mesa listas para ser usadas con total concentración.",
+    formulaExplanation: "1 = La Semilla / El Inicio en el mundo terrenal. Reúne los 4 elementos sobre su mesa para materializar una idea.",
+    learningFormula: "Voluntad consciente + 4 Elementos = Capacidad absoluta de manifestar",
+    uprightMeaning: "Tienes todo lo que necesitas para que tu proyecto se concrete. Eres el puente entre la idea y la realidad; solo necesitas canalizar tu enfoque y dar el primer paso.",
+    reversedMeaning: "Advertencia de que estás dispersando tus energías, postergando o manipulando a otros en lugar de trabajar honestamente con tus dones.",
+    reflectiveQuestion: "¿Qué idea estoy listo para bajar a la tierra usando los recursos que ya tengo a mano?",
+    advice: "No esperes más confirmaciones: organiza tus herramientas y actúa con determinación.",
+    symbolism: ["Símbolo de infinito: Acceso continuo a la energía cósmica", "Mesa con 4 elementos: Dominio sobre emociones, pensamientos, pasión y materia", "Cinturón de ouroboros: Ciclos eternos de transformación"]
+  },
+  {
+    id: "la-sacerdotisa",
+    number: 2,
+    roman: "II",
+    name: "La Sacerdotisa",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "La contraparte receptiva del ego: la intuición, los límites del saber consciente y la memoria profunda.",
+    element: "Agua / Luna",
+    archetype: "La Guardiana del Misterio / La Intuición",
+    keywordsUpright: ["Intuición", "Silencio fértil", "Misterio", "Subconsciente", "Sabiduría oculta"],
+    keywordsReversed: ["Secretos dañinos", "Desconexión intuitiva", "Superficialidad", "Duda interna", "Aislamiento"],
+    visualObservation: "Una mujer serena sentada entre dos columnas (una negra 'B' y una blanca 'J'), con un velo de granadas a su espalda, una luna creciente a sus pies y un pergamino sagrado (TORA) en el regazo.",
+    whatEyesSee: "¿Qué está haciendo? Permanece sentada en perfecta calma y silencio, custodiando la entrada a lo invisible. No habla ni gesticula; escucha lo que no se dice.",
+    formulaExplanation: "2 = Dualidad / Encrucijada. Representa el puente entre lo visible y lo invisible mediante la receptividad intuitiva.",
+    learningFormula: "Silencio + Receptividad = Revelación de la verdad interior",
+    uprightMeaning: "Las respuestas que buscas no están en el ruido exterior ni en el análisis lógico, sino en tus corazonadas, sueños y percepciones sutiles.",
+    reversedMeaning: "Ignoras tus avisos intuitivos por querer justificarlo todo con la lógica, o guardas secretos que te pesan emocionalmente.",
+    reflectiveQuestion: "¿Qué verdad estoy sintiendo en mi cuerpo aunque mi mente intente negarla?",
+    advice: "Guarda silencio, observa sin juzgar y permite que la intuición madure antes de hablar.",
+    symbolism: ["Columnas Boaz y Jachin: Dualidad (luz/sombra, positivo/negativo)", "Velo de granadas: Fertilidad del mundo inconsciente", "Pergamino TORA: Conocimiento de las leyes universales ocultas"]
+  },
+  {
+    id: "la-emperatriz",
+    number: 3,
+    roman: "III",
+    name: "La Emperatriz",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "La fertilidad terrenal, el amor incondicional, la naturaleza y la creatividad del ego.",
+    element: "Tierra / Venus",
+    archetype: "La Gran Madre / La Creadora Nutricia",
+    keywordsUpright: ["Fertilidad", "Abundancia", "Creatividad", "Placer sensorial", "Gestación"],
+    keywordsReversed: ["Asfixia emocional", "Bloqueo creativo", "Descuido personal", "Dependencia", "Escasez mental"],
+    visualObservation: "Una mujer coronada de 12 estrellas reposa cómodamente en un trono acolchado en medio de un campo de trigo dorado, rodeada de bosques y una cascada que fluye, con el escudo de Venus a su lado.",
+    whatEyesSee: "¿Qué está haciendo? Descansa relajada, disfrutando de la belleza terrenal, irradiando calidez maternal y celebrando la generosidad de la vida.",
+    formulaExplanation: "3 = Expansión / Fruto. Es la unión de la energía activa del Mago (1) y la receptiva de la Sacerdotisa (2) que da a luz una nueva creación.",
+    learningFormula: "Idea (1) + Gestación (2) = Fruto abundante y fértil (3)",
+    uprightMeaning: "Fase de gran creatividad, nutrición de proyectos y disfrute de los placeres de la vida. Todo lo que siembres con amor florecerá con holgura.",
+    reversedMeaning: "Puedes estar descuidando tus necesidades físicas o, por el contrario, cayendo en la sobreprotección y el apego excesivo.",
+    reflectiveQuestion: "¿Cómo puedo tratarme con más ternura y celebrar los frutos de mi esfuerzo?",
+    advice: "Conéctate con la naturaleza, con tus cinco sentidos y confía en el tiempo orgánico de las cosas.",
+    symbolism: ["Trigo maduro: Abundancia material y sustento", "Cascada: Flujo inagotable de emociones y vida", "12 estrellas: Los doce signos del zodíaco y los ciclos cósmicos"]
+  },
+  {
+    id: "el-emperador",
+    number: 4,
+    roman: "IV",
+    name: "El Emperador",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "La estructura, las fronteras, la ley civil, la estabilidad material y la autoridad protectora.",
+    element: "Fuego / Aries",
+    archetype: "El Padre Protector / El Arquiteco del Orden",
+    keywordsUpright: ["Estructura", "Autoridad", "Límites claros", "Estabilidad", "Liderazgo firme"],
+    keywordsReversed: ["Tiranía", "Rigidez", "Inseguridad de control", "Caos por falta de orden", "Abuso de poder"],
+    visualObservation: "Un monarca de barba blanca con armadura bajo su túnica roja, sentado en un trono de piedra maciza adornado con cabezas de carnero, sosteniendo un cetro ankh y un orbe.",
+    whatEyesSee: "¿Qué está haciendo? Vigila con mirada firme y resuelta su reino. No descansa; está listo para defender la ley, asegurar fronteras y mantener el orden.",
+    formulaExplanation: "4 = Estabilidad / Estructura. El cimiento del mundo material y de las reglas que sostienen la convivencia.",
+    learningFormula: "Firmeza + Reglas claras = Orden duradero y protección",
+    uprightMeaning: "Es momento de poner orden, definir límites claros y asumir el liderazgo de tu vida o proyecto con disciplina y madurez.",
+    reversedMeaning: "Alerta sobre rigidez mental, terquedad, querer controlar lo incontrolable o sentirte aplastado por figuras de autoridad autoritarias.",
+    reflectiveQuestion: "¿Qué área de mi vida necesita disciplina, horarios y límites más definidos?",
+    advice: "Construye sobre bases sólidas: la libertad duradera requiere una buena estructura previa.",
+    symbolism: ["Trono de piedra: Inmutabilidad y solidez inquebrantable", "Cabezas de carnero: Determinación, fuerza ariana y valentía", "Armadura: Protección contra invasiones y templanza"]
+  },
+  {
+    id: "el-sumo-sacerdote",
+    number: 5,
+    roman: "V",
+    name: "El Sumo Sacerdote (El Hierofante)",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "La educación, la moral social, la tradición comunitaria y la pertenencia a un grupo guiado.",
+    element: "Tierra / Tauro",
+    archetype: "El Maestro Espiritual / El Custodio de la Tradición",
+    keywordsUpright: ["Enseñanza", "Tradición", "Valores éticos", "Comunidad", "Mentoría"],
+    keywordsReversed: ["Dogmatismo", "Rebeldía ciega", "Hipocresía moral", "Inconformismo", "Normas asfixiantes"],
+    visualObservation: "Una figura eclesiástica con triple tiara y cruz papal bendice a dos acólitos arrodillados ante él; a sus pies yacen dos llaves dorada y plateada cruzadas.",
+    whatEyesSee: "¿Qué está haciendo? Enseña e instruye formalmente a sus discípulos, transmitiendo una doctrina sagrada aprobada y compartida por la comunidad.",
+    formulaExplanation: "5 = Primera Crisis / Búsqueda de sentido. Ante la rigidez del 4, el individuo busca orientación ética y pertenencia a una tradición que le dé respuestas.",
+    learningFormula: "Tradición probada + Mentor de confianza = Sabiduría compartida",
+    uprightMeaning: "Aprende de quienes ya han recorrido el camino. Busca un maestro, sigue un método probado o actúa dentro de un marco ético sólido.",
+    reversedMeaning: "Cuestiona las normas ciegas impuestas por la sociedad, la familia o los dogmas que ya no resuenan con tu conciencia auténtica.",
+    reflectiveQuestion: "¿Sigo esta creencia porque es mi verdad o porque es lo que mi entorno espera de mí?",
+    advice: "Honra el aprendizaje guiado, pero recuerda que el mejor maestro es aquel que te enseña a pensar por ti mismo.",
+    symbolism: ["Dos llaves cruzadas: La apertura de los misterios conscientes e inconscientes", "Triple corona: Dominio sobre los tres planos (cuerpo, mente, espíritu)", "Dos acólitos: El valor del discipulado humilde"]
+  },
+  {
+    id: "los-enamorados",
+    number: 6,
+    roman: "VI",
+    name: "Los Enamorados",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "La primera gran elección del alma: decidir según tus propios valores éticos y el poder de la unión íntima.",
+    element: "Aire / Géminis",
+    archetype: "La Elección del Corazón / Los Amantes Sagrados",
+    keywordsUpright: ["Elección crucial", "Amor consciente", "Valores alineados", "Afinidad", "Compromiso"],
+    keywordsReversed: ["Dilema ético", "Discordia", "Elegir por miedo", "Valores enfrentados", "Tentación dañina"],
+    visualObservation: "Un hombre y una mujer desnudos en un paraíso floreciente bajo las alas abiertas del arcángel Rafael. Detrás de ella está el árbol del fruto con la serpiente; detrás de él, el árbol de las llamas.",
+    whatEyesSee: "¿Qué está haciendo la pareja? El hombre mira a la mujer, la mujer mira hacia arriba al ángel, y el ángel los bendice a ambos. Están ante el umbral de una unión y de una decisión irreversible.",
+    formulaExplanation: "6 = Armonía / Integración. La integración de los opuestos (masculino/femenino, mente/corazón) a través de una elección consciente.",
+    learningFormula: "Alineación de valores + Decisión del corazón = Unión auténtica",
+    uprightMeaning: "Una decisión crucial se presenta ante ti. No se trata solo de amor romántico, sino de elegir el camino que refleje quién eres de verdad.",
+    reversedMeaning: "Conflicto interno entre el deber y el querer; indecisión que paraliza o haber traicionado tus propios principios por complacer.",
+    reflectiveQuestion: "¿Esta decisión nace del amor o del miedo a estar solo?",
+    advice: "Elige aquello que unifique tu mente y tu corazón, aun si exige renunciar a caminos más cómodos.",
+    symbolism: ["Ángel Rafael: La bendición de la sanación y la armonía divina", "Dos árboles: El árbol del conocimiento del bien y del mal, y el árbol de la vida", "Desnudez: Transparencia total sin máscaras"]
+  },
+  {
+    id: "el-carro",
+    number: 7,
+    roman: "VII",
+    name: "El Carro",
+    arcana: "mayor",
+    septenary: 1,
+    septenaryName: "Septenario 1: El Plano Terrenal y el Ego",
+    septenaryTheme: "La culminación del primer septenario: el triunfo del ego en el mundo, el dominio de las contradicciones y el éxito terrenal.",
+    element: "Agua / Cáncer",
+    archetype: "El Guerrero Victorioso / El Conquistador de Sí Mismo",
+    keywordsUpright: ["Victoria terrenal", "Determinación", "Control de impulsos", "Foco implacable", "Superación"],
+    keywordsReversed: ["Pérdida de rumbo", "Agresividad desmedida", "Frustración", "Falta de control", "Atropello"],
+    visualObservation: "Un joven guerrero con armadura decorada con lunas sonrientes y serias conduce un carro techado de estrellas, tirado por dos esfinges (una blanca y una negra) que miran en direcciones opuestas pero avanzan juntas.",
+    whatEyesSee: "¿Qué está haciendo? No lleva riendas físicas; controla a las dos fieras opuestas únicamente con su vara de mando, su mirada fija y la pura fuerza de su voluntad.",
+    formulaExplanation: "7 = Prueba / Victoria sobre el plano terrenal. Cierra el primer septenario demostrando que el ego ha aprendido a domar sus contradicciones para triunfar.",
+    learningFormula: "Voluntad inquebrantable + Dominio de contradicciones = Victoria exterior",
+    uprightMeaning: "Has superado las dudas y tienes el viento a favor. Mantén el foco firme y la disciplina; la victoria está a tu alcance si no te distraes.",
+    reversedMeaning: "Sientes que el carro se sale del camino o que estás intentando forzar las cosas con prepotencia sin escuchar a tu entorno.",
+    reflectiveQuestion: "¿Estoy dirigiendo mis emociones opuestas hacia un propósito claro o dejo que me tiren en direcciones contrarias?",
+    advice: "Toma las riendas internas: la verdadera maestría consiste en hacer que la luz y la sombra trabajen para el mismo objetivo.",
+    symbolism: ["Esfinges blanca y negra: Impulsos opuestos de la psique que deben coordinarse", "Dosel de estrellas: Conexión con los designios celestes superiores", "Ciudad amurallada detrás: Ha dejado atrás la seguridad infantil para conquistar el mundo exterior"]
+  },
+
+  // SEPTENARIO 2 (VIII al XIV): El viaje interior, el alma, el inconsciente y las crisis de madurez
+  {
+    id: "la-fuerza",
+    number: 8,
+    roman: "VIII",
+    name: "La Fuerza",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "Aprender a dialogar con el instinto y las pulsiones animales internas a través de la compasión, la paciencia y el amor.",
+    element: "Fuego / Leo",
+    archetype: "La Domadora Compasiva / La Valentía Serena",
+    keywordsUpright: ["Fuerza interior", "Compasión", "Paciencia", "Dominio del instinto", "Coraje suave"],
+    keywordsReversed: ["Furia descontrolada", "Inseguridad", "Cobardía", "Brutalidad", "Agotamiento"],
+    visualObservation: "Una mujer vestida de blanco con una guirnalda de flores en la cabeza acaricia y sostiene con dulzura las fauces de un león rojo rugiente; sobre su cabeza brilla el símbolo del infinito.",
+    whatEyesSee: "¿Qué está haciendo? No usa cadenas ni armas; con suavidad absoluta y una sonrisa tranquila, calma la fiera sin herirla ni dejarse devorar.",
+    formulaExplanation: "8 = Movimiento continuo y maestría. Abre el segundo septenario demostrando que el alma no vence a la bestia con violencia, sino con dulzura.",
+    learningFormula: "Paciencia infinita + Compasión = Transmutación del instinto animal",
+    uprightMeaning: "La situación no requiere fuerza bruta ni gritos, sino constancia, diplomacia y templanza emocional. Tu verdadero poder reside en tu serenidad.",
+    reversedMeaning: "Te estás dejando gobernar por la rabia, los celos o el miedo, o te sientes completamente drenado de fuerzas para seguir luchando.",
+    reflectiveQuestion: "¿Qué emoción fiera en mí (ira, miedo, deseo) necesita ser escuchada con ternura en lugar de reprimida?",
+    advice: "El amor vence lo que la agresión jamás podrá someter. Respira hondo y acaricia tu propia vulnerabilidad.",
+    symbolism: ["León rojo: Pasiones carnales, instintos salvajes y orgullo", "Túnica blanca: Pureza moral y ausencia de agresión", "Guirnalda de rosas: La dulzura que domestica lo salvaje"]
+  },
+  {
+    id: "el-ermitano",
+    number: 9,
+    roman: "IX",
+    name: "El Ermitaño",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "El retiro voluntario, la soledad fértil, la búsqueda de la sabiduría interna y la introspección del alma.",
+    element: "Tierra / Virgo",
+    archetype: "El Sabio Solitario / El Faro Interior",
+    keywordsUpright: ["Introspección", "Soledad fértil", "Búsqueda de la verdad", "Prudencia", "Guía interior"],
+    keywordsReversed: ["Aislamiento amargo", "Soledad no elegida", "Terquedad ermitaña", "Evasión del mundo", "Temor a la luz"],
+    visualObservation: "Un anciano con una larga capa gris con capucha sostiene en alto una linterna dorada con una estrella de seis puntas en su interior, apoyándose en un báculo dorado sobre una cumbre nevada solitaria.",
+    whatEyesSee: "¿Qué está haciendo? Camina lentamente en la oscuridad de la montaña alumbrando apenas el próximo paso que va a dar. No corre; contempla la profundidad de la noche.",
+    formulaExplanation: "9 = Cosecha interior y soledad. Culminación de un ciclo de reflexión previa para destilar la sabiduría esencial.",
+    learningFormula: "Silencio voluntario + Linterna de la conciencia = Claridad del sabio",
+    uprightMeaning: "Es momento de retirarte del ruido exterior, apagar las opiniones ajenas y encender tu propia luz. La respuesta solo la encontrarás en tu intimidad.",
+    reversedMeaning: "Te estás aislando por amargura o miedo a ser herido, o te niegas a mirar dentro de ti por miedo a lo que puedas descubrir.",
+    reflectiveQuestion: "¿Qué me diría mi yo más anciano y sabio si le pidiera consejo hoy?",
+    advice: "No temas a la soledad: es el taller sagrado donde el alma forja su propia brújula.",
+    symbolism: ["Linterna con estrella de 6 puntas: El sello de Salomón, luz de la verdad cósmica", "Báculo: Apoyo en la experiencia acumulada y la prudencia", "Nieve en la cumbre: Altura espiritual y pureza sin distracciones"]
+  },
+  {
+    id: "la-rueda-de-la-fortuna",
+    number: 10,
+    roman: "X",
+    name: "La Rueda de la Fortuna",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "El reconocimiento de los ciclos de la vida, el karma, el destino y aquello que escapa al control del ego.",
+    element: "Fuego / Júpiter",
+    archetype: "El Destino / La Rueda del Samsara",
+    keywordsUpright: ["Cambio de ciclo", "Giro del destino", "Karma positivo", "Oportunidad", "Evolución"],
+    keywordsReversed: ["Resistencia al cambio", "Mala racha temporal", "Repetición de patrones", "Sensación de impotencia"],
+    visualObservation: "Una gran rueda dorada inscrita con letras hebreas y las letras TARO/ROTA flota en el cielo, custodiada por una esfinge azul en la cima, Anubis ascendiendo por la derecha y Tifón descendiendo por la izquierda, con las 4 criaturas aladas en las esquinas.",
+    whatEyesSee: "¿Qué está haciendo la rueda? Gira incesantemente en el cielo. Unos seres suben y otros bajan; nada permanece estático en su periferia.",
+    formulaExplanation: "10 = Fin de un ciclo y apertura a otro. El ego comprende que no tiene el control absoluto de las circunstancias y debe fluir.",
+    learningFormula: "Aceptación de ciclos + Centro inmutable = Paz ante el destino",
+    uprightMeaning: "Un giro inesperado de los acontecimientos se aproxima a tu favor. Los ciclos cambian: si estabas abajo, comienzas a subir; aprovecha la marea.",
+    reversedMeaning: "Sensación de que la suerte no te acompaña o frustración por repetir el mismo tropiezo. Recuerda: quien no aprende la lección, repite el examen.",
+    reflectiveQuestion: "¿Qué patrón repetitivo de mi vida estoy listo para romper colocándome en el centro de la rueda?",
+    advice: "No intentes frenar la rueda: quédate en su eje inmóvil, donde ninguna tormenta externa puede tambalearte.",
+    symbolism: ["Esfinge: La sabiduría inmutable en medio del cambio", "Anubis y Tifón: Fuerzas ascendentes de la conciencia y descendentes del olvido", "4 seres alados: Los cuatro evangelistas/signos fijos dominando el tiempo"]
+  },
+  {
+    id: "la-justicia",
+    number: 11,
+    roman: "XI",
+    name: "La Justicia",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "La lucidez ética del alma, la causa y efecto kármica, el discernimiento implacable y el equilibrio honesto.",
+    element: "Aire / Libra",
+    archetype: "La Balanza Cósmica / El Ojo Imparcial",
+    keywordsUpright: ["Equilibrio moral", "Causa y efecto", "Claridad y verdad", "Responsabilidad", "Decisión justa"],
+    keywordsReversed: ["Injusticia", "Deshonestidad", "Evasión de culpas", "Parcialidad", "Juicio implacable hacia uno"],
+    visualObservation: "Una figura severa y ecuánime vestida de rojo se sienta entre dos pilares de piedra con un velo púrpura detrás. Sostiene una espada de doble filo alzada en la mano derecha y una balanza dorada en la izquierda.",
+    whatEyesSee: "¿Qué está haciendo? Mira fijamente al frente sin pestañear, pesando acciones con la balanza y lista para cortar ilusiones con la espada.",
+    formulaExplanation: "11 = Fuerza moral y honestidad despiadada. La conciencia examina las consecuencias de sus elecciones.",
+    learningFormula: "Balanza imparcial + Espada de la verdad = Causa y efecto lúcida",
+    uprightMeaning: "Recibirás exactamente lo que has sembrado. Momento de resolver trámites legales, tomar decisiones éticas con objetividad y asumir responsabilidades.",
+    reversedMeaning: "Sentimiento de injusticia, mentiras descubiertas o excesiva autocrítica despiadada que te condena sin compasión.",
+    reflectiveQuestion: "¿Estoy siendo 100% honesto conmigo mismo sobre mi parte de responsabilidad en esta situación?",
+    advice: "Actúa con impecabilidad: cuando tus acciones concuerdan con la verdad, no hay nada que temer de la ley de causa y efecto.",
+    symbolism: ["Espada de doble filo: Corta tanto el engaño ajeno como el autoengaño propio", "Balanza dorada: Pesaje exacto de intenciones y hechos", "Velo púrpura: La sabiduría espiritual detrás de la ley humana"]
+  },
+  {
+    id: "el-colgado",
+    number: 12,
+    roman: "XII",
+    name: "El Colgado",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "La rendición voluntaria del ego, la pausa necesaria para ver el mundo con otra perspectiva y el sacrificio transformador.",
+    element: "Agua / Neptuno",
+    archetype: "El Místico Entregado / La Inversión de Perspectiva",
+    keywordsUpright: ["Pausa sagrada", "Nueva perspectiva", "Rendición constructiva", "Soltar el control", "Iluminación serena"],
+    keywordsReversed: ["Victimismo inútil", "Resistencia estéril", "Sacrificio tóxico", "Estancamiento terco", "Mártir"],
+    visualObservation: "Un joven pende de un pie atado a un árbol de madera viva en forma de 'T'. Su otra pierna está cruzada formando un '4', sus brazos atrás forman un triángulo, y alrededor de su cabeza resplandece una aureola dorada.",
+    whatEyesSee: "¿Qué está haciendo? Cuelga boca abajo con expresión de total serenidad y paz, no de dolor. Está voluntariamente en pausa, viendo la realidad al revés.",
+    formulaExplanation: "12 = La inversión de valores. Para madurar, el alma debe aceptar que no todo se resuelve haciendo; a veces el mayor avance es la quietud.",
+    learningFormula: "Rendición al momento + Pausa de la acción = Epifanía y visión renovada",
+    uprightMeaning: "No fuerces las cosas; estás en un compás de espera necesario. Cambia de perspectiva: lo que parecía una pérdida es la antesala de una gran comprensión.",
+    reversedMeaning: "Te empeñas en hacer sacrificios innecesarios para que te reconozcan, o pataleas contra una pausa que no puedes evitar.",
+    reflectiveQuestion: "¿Qué sucedería si por un momento dejo de luchar y acepto ver esta situación desde el punto de vista opuesto?",
+    advice: "Suelta las prisas: la sabiduría más profunda llega cuando el ego se queda quieto.",
+    symbolism: ["Aureola en la cabeza: Iluminación alcanzada a través del desprendimiento", "Árbol con brotes verdes: La madera está viva, la pausa está gestando vida", "Posición de piernas: El número 4 (materia) invertido hacia lo espiritual"]
+  },
+  {
+    id: "la-muerte",
+    number: 13,
+    roman: "XIII",
+    name: "La Muerte",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "La gran metamorfosis del alma: muerte simbólica de viejas identidades, desapego radical y renacimiento.",
+    element: "Agua / Escorpio",
+    archetype: "La Gran Transformación / El Segador de lo Caduco",
+    keywordsUpright: ["Fin inevitable", "Transformación radical", "Cierre de ciclo", "Renacimiento", "Desapego profundo"],
+    keywordsReversed: ["Aferramiento a lo muerto", "Miedo al cambio", "Agonía prolongada", "Resistencia fútil"],
+    visualObservation: "Un esqueleto con armadura negra cabalga sobre un caballo blanco portando un estandarte con una rosa mística de cinco pétalos. En el suelo yacen un rey, un niño y un obispo pidiendo clemencia; en el horizonte despunta un sol radiante entre dos torres.",
+    whatEyesSee: "¿Qué está haciendo el jinete? Avanza con paso firme y ceremonioso. Nadie puede comprarlo ni evitar su paso; pero en el horizonte donde mira, el sol amanece.",
+    formulaExplanation: "13 = Ruptura del molde previo. Marca el fin del viejo yo para que el alma no quede atrapada en su propia cáscara.",
+    learningFormula: "Aceptación del final + Cierre sin apego = Espacio fértil para lo nuevo",
+    uprightMeaning: "Algo ha llegado a su término de forma natural e inapelable: una relación, un trabajo, una creencia o una etapa de vida. No temas: es la limpieza necesaria para renacer.",
+    reversedMeaning: "Te aferras desesperadamente a algo que ya caducó, prolongando el sufrimiento por puro terror a la incertidumbre del vacío.",
+    reflectiveQuestion: "¿Qué parte de mi antigua identidad necesita morir para que florezca la persona que realmente soy ahora?",
+    advice: "Permite que lo viejo se marche con gratitud por lo vivido. Todo invierno precede a una primavera.",
+    symbolism: ["Rosa mística de 5 pétalos: La vida eterna tras la disolución formal", "Sol entre las dos torres: La luz incombustible del amanecer espiritual", "Caballo blanco: La pureza del proceso inevitable"]
+  },
+  {
+    id: "la-templanza",
+    number: 14,
+    roman: "XIV",
+    name: "La Templanza",
+    arcana: "mayor",
+    septenary: 2,
+    septenaryName: "Septenario 2: El Viaje Interior y las Crisis de Madurez",
+    septenaryTheme: "La culminación del segundo septenario: la alquimia interior, la sanación de heridas y el equilibrio sutil de opuestos.",
+    element: "Fuego / Sagitario",
+    archetype: "El Alquimista Interior / El Ángel Sanador",
+    keywordsUpright: ["Armonía interior", "Sanación", "Paciencia alquímica", "Moderación", "Integración de opuestos"],
+    keywordsReversed: ["Desequilibrio", "Excesos", "Impaciencia", "Falta de armonía", "Mezclas incompatibles"],
+    visualObservation: "Un ángel alado con una túnica blanca y un triángulo en el pecho tiene un pie en el agua de un estanque y el otro en tierra firme. Vierte un fluido continuo y luminoso de una copa dorada a otra sin derramar una sola gota.",
+    whatEyesSee: "¿Qué está haciendo? Mantiene un flujo perfecto y continuo de energía entre dos vasijas con absoluta concentración y serenidad.",
+    formulaExplanation: "14 = Cierra el segundo septenario demostrando que el alma, tras sobrevivir a la crisis de la muerte, ha integrado sus aguas internas y ha sanado.",
+    learningFormula: "Flujo equilibrado + Paciencia alquímica = Sanación y madurez del alma",
+    uprightMeaning: "Fase de sanación, paz mental y conciliación de partes antes enfrentadas. Todo se está acomodando en la proporción justa; confía en el proceso gradual.",
+    reversedMeaning: "Estás cayendo en la polarización, la prisa desmedida o los excesos emocionales o físicos que rompen tu equilibrio vital.",
+    reflectiveQuestion: "¿Qué aspectos contradictorios de mi vida necesitan ser reconciliados con más paciencia?",
+    advice: "Modera tus reacciones: la verdadera magia no es un estallido súbito, sino la mezcla sabia y constante de tus ingredientes vitales.",
+    symbolism: ["Un pie en tierra y otro en agua: Conexión simultánea entre el mundo material y el subconsciente", "Flujo entre copas: La transmutación continua de la energía", "Sendero hacia la montaña dorada: El camino hacia la luz del tercer septenario"]
+  },
+
+  // SEPTENARIO 3 (XV al XXI): Las pruebas espirituales, la sombra, la caída de falsedades y la liberación
+  {
+    id: "el-diablo",
+    number: 15,
+    roman: "XV",
+    name: "El Diablo",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "La confrontación directa con la sombra psicológica, los apegos ilusorios, la codependencia y las cadenas autoimpuestas.",
+    element: "Tierra / Capricornio",
+    archetype: "La Sombra / El Guardián del Umbral Oscuro",
+    keywordsUpright: ["Apegos tóxicos", "Fascinación material", "Confrontar la sombra", "Cadenas ilusorias", "Codependencia"],
+    keywordsReversed: ["Liberación de cadenas", "Despertar del engaño", "Superar una adicción", "Recuperar la soberanía"],
+    visualObservation: "Una criatura con cuernos de macho cabrío, alas de murciélago y antorcha invertida se sienta sobre un pedestal cúbico. A sus pies, encadenados por el cuello pero con eslabones muy holgados, están un hombre y una mujer desnudos con pequeños cuernos y colas.",
+    whatEyesSee: "¿Qué está haciendo la escena? El Diablo preside con mirada hipnótica; las figuras humanas parecen cautivas, pero si miran con atención, las cadenas les caben perfectamente por la cabeza para quitárselas cuando quieran.",
+    formulaExplanation: "15 = Abre el tercer septenario enfrentando al individuo con su noche más densa: creer que la materia y el placer egoísta son la única realidad.",
+    learningFormula: "Identificación ciega + Deseo inconsciente = Esclavitud autoimpuesta",
+    uprightMeaning: "Revela ataduras a relaciones tóxicas, adicciones, obsesiones con el dinero o el estatus. Te advierte de que el carcelero eres tú mismo.",
+    reversedMeaning: "Comienzas a ver las cosas como son, te liberas de una trampa emocional o rompes un patrón adictivo destructivo.",
+    reflectiveQuestion: "¿A qué placer, rencor o hábito me aferro aunque sé que envenena mi libertad?",
+    advice: "No temas a tu oscuridad: mírala de frente para quitarle su poder de manipularte.",
+    symbolism: ["Cadenas holgadas: La ilusión del cautiverio; siempre pudiste salir", "Antorcha hacia abajo: El fuego de la pasión usado para quemar en vez de iluminar", "Pedestal negro: La obsesión por la forma material"]
+  },
+  {
+    id: "la-torre",
+    number: 16,
+    roman: "XVI",
+    name: "La Torre",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "El rayo de la verdad fulminante: la caída abrupta de las estructuras falsas, el orgullo del ego y la liberación forzosa.",
+    element: "Fuego / Marte",
+    archetype: "El Despertar Abrupto / La Caída de Babilonia",
+    keywordsUpright: ["Quiebre repentino", "Caída de falsedades", "Liberación súbita", "Verdad demoledora", "Colapso necesario"],
+    keywordsReversed: ["Evitar el colapso inevitable", "Miedo a la verdad", "Prolongar la agonía de una mentira", "Reconstrucción"],
+    visualObservation: "Una imponente torre de piedra construida sobre una montaña rocosa es alcanzada por un rayo celeste. La corona dorada de la cúspide salta por los aires entre llamas y dos figuras humanas caen al vacío rodeadas de 22 gotas de fuego.",
+    whatEyesSee: "¿Qué está haciendo la escena? El edificio construido con orgullo se desmorona en un segundo. Las figuras caen, pero la prisión de piedra ha quedado abierta para siempre.",
+    formulaExplanation: "16 = La crisis cósmica indispensable. Todo lo que fue construido sobre mentiras o arrogancia debe desmoronarse para liberar el alma.",
+    learningFormula: "Estructura falsa + Rayo de realidad = Liberación radical y despertar",
+    uprightMeaning: "Un evento repentino sacude los cimientos de tu vida o desmonta una ilusión que sostenías. Duele, pero era una cárcel dorada que te impedía crecer.",
+    reversedMeaning: "Intentas sostener desesperadamente un castillo de naipes que se cae a pedazos, o estás empezando a recoger los escombros para edificar con autenticidad.",
+    reflectiveQuestion: "¿Qué mentira cómoda o estructura rígida en mi vida necesita derrumbarse para que yo sea libre?",
+    advice: "No reconstruyas la misma torre con los mismos errores: celebra que los muros que te aislaban han caído.",
+    symbolism: ["Rayo divino: Intervención súbita de la realidad superior", "Corona desprendida: Pérdida del orgullo mental y del falso estatus", "22 gotas de fuego: Las 22 letras hebreas/arcanos purificando la tierra"]
+  },
+  {
+    id: "la-estrella",
+    number: 17,
+    roman: "XVII",
+    name: "La Estrella",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "La esperanza pura tras la tormenta, la conexión con la guía divina, la generosidad desinteresada y la paz del alma.",
+    element: "Aire / Acuario",
+    archetype: "La Doncella Cósmica / El Faro de la Esperanza",
+    keywordsUpright: ["Esperanza renovada", "Inspiración divina", "Sanación profunda", "Paz interior", "Generosidad"],
+    keywordsReversed: ["Pesimismo", "Falta de fe", "Desesperanza", "Desconexión espiritual", "Inseguridad en el futuro"],
+    visualObservation: "Una doncella desnuda vierte agua de dos jarras: una nutre la tierra fértil y la otra alimenta un manantial de aguas vivas. Sobre ella brilla una gran estrella dorada de ocho puntas rodeada de siete estrellas menores; un pajarillo canta en un árbol al fondo.",
+    whatEyesSee: "¿Qué está haciendo? Vierte el agua con total serenidad bajo la noche estrellada, sin prisa, sin retener nada para sí misma, en comunión con el cosmos.",
+    formulaExplanation: "17 = La primera luz espiritual tras el desastre de la Torre. El alma, desnuda de pretensiones, recibe la bendición celestial.",
+    learningFormula: "Desnudez del alma + Entrega sin reservas = Gracia y esperanza renovada",
+    uprightMeaning: "Llega la calma después del temporal. Tus heridas cicatrizan, recuperas la fe y el camino a seguir brilla con claridad inspiradora.",
+    reversedMeaning: "Caes en el desánimo pensando que nada mejorará, cegándote ante las bendiciones y la luz que ya tienes a tu disposición.",
+    reflectiveQuestion: "¿En qué sueño o vocación auténtica necesito volver a confiar con el corazón abierto?",
+    advice: "Regala tu mejor energía al mundo sin esperar recompensas inmediatas; la fuente de la que bebes es inagotable.",
+    symbolism: ["Gran estrella de 8 puntas: La luz cósmica central y la renovación de la fe", "Desnudez: Autenticidad total sin máscaras defensivas", "Pájaro ibis en el árbol: Símbolo de sabiduría y comunicación espiritual"]
+  },
+  {
+    id: "la-luna",
+    number: 18,
+    roman: "XVIII",
+    name: "La Luna",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "La noche oscura del alma: las ilusiones, los miedos ancestrales, las fantasías engañosas y las profundidades del inconsciente.",
+    element: "Agua / Piscis",
+    archetype: "El Laberinto Onírico / El Espejismo Subconsciente",
+    keywordsUpright: ["Mundo onírico", "Miedos inconscientes", "Ilusión o confusión", "Sensibilidad psíquica", "Niebla mental"],
+    keywordsReversed: ["Disipación de la niebla", "Claridad tras la angustia", "Superar pesadillas", "Descubrir un engaño"],
+    visualObservation: "Una luna con rostro pensativo derrama gotas de rocío dorado entre dos torres lejanas. En tierra, un perro y un lobo aúllan a la luna junto a un camino sinuoso, mientras un cangrejo de río emerge de un estanque oscuro.",
+    whatEyesSee: "¿Qué está haciendo la escena? Todos miran hacia arriba en un paisaje bañado por la luz engañosa de la noche. El camino que serpentea entre las torres parece solitario y poblado de sombras inciertas.",
+    formulaExplanation: "18 = La penúltima prueba: atravesar la niebla de los propios miedos sin perder el juicio ni dejarse devorar por las fantasías.",
+    learningFormula: "Sensibilidad exacerbada + Desconocimiento interior = Miedo a lo invisible",
+    uprightMeaning: "No todo es lo que parece; hay cosas ocultas o distorsionadas por tus propias inseguridades. Camina despacio y no tomes decisiones definitivas en plena niebla.",
+    reversedMeaning: "Comienzas a distinguir la realidad de tus fantasías paranoicas; los secretos salen a la luz y se despeja la incertidumbre.",
+    reflectiveQuestion: "¿Qué miedo oculto está distorsionando mi visión de la realidad haciéndome ver monstruos donde solo hay sombras?",
+    advice: "Honra tus emociones y sueños, pero no confundas tus temores imaginados con los hechos concretos.",
+    symbolism: ["Perro y lobo: La mente domesticada y los instintos salvajes aullando ante el misterio", "Cangrejo emergiendo: Recuerdos arcaicos que suben desde el abismo de la psique", "Gotas de yod: La compasión divina cayendo incluso en la noche más oscura"]
+  },
+  {
+    id: "el-sol",
+    number: 19,
+    roman: "XIX",
+    name: "El Sol",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "La iluminación radiante, la inocencia recuperada, la verdad cristalina, el éxito radiante y la alegría de existir.",
+    element: "Fuego / Sol",
+    archetype: "El Niño Dorado / La Verdad Radiante",
+    keywordsUpright: ["Claridad absoluta", "Alegría genuina", "Vitalidad", "Éxito radiante", "Inocencia sabia"],
+    keywordsReversed: ["Optimismo ciego", "Arrogancia temporal", "Nublado transitorio", "Fatiga", "Falta de entusiasmo"],
+    visualObservation: "Un gran sol dorado con rostro benevolente irradia rayos rectos y ondulados sobre un muro de piedra cubierto de cuatro girasoles maduros. En primer plano, un niño desnudo con corona de flores y pluma roja cabalga risueño sobre un caballo blanco con los brazos abiertos.",
+    whatEyesSee: "¿Qué está haciendo el niño? Cabalga sin montura ni riendas, totalmente expuesto y feliz, celebrando la existencia con una sonrisa radiante bajo la luz directa del sol.",
+    formulaExplanation: "19 = El triunfo definitivo de la luz sobre la noche de la Luna. La sabiduría se vuelve tan sencilla como la sonrisa de un niño.",
+    learningFormula: "Luz de la conciencia + Inocencia recuperada = Plenitud y dicha total",
+    uprightMeaning: "Momento de plenitud, calidez, éxito y felicidad compartida. Todas las dudas se disipan; todo está claro, honesto y a la vista.",
+    reversedMeaning: "Un pequeño nubarrón temporal oculta tu alegría o estás pecando de orgullo insensato. Conecta de nuevo con tu gratitud.",
+    reflectiveQuestion: "¿Qué me hace sentir verdaderamente vivo, alegre y agradecido en este momento?",
+    advice: "Brilla sin timidez: tu alegría y autenticidad tienen el poder de calentar e inspirar a todos los que te rodean.",
+    symbolism: ["Niño desnudo: Pureza de alma sin secretos ni vergüenza", "Caballo blanco sin riendas: El instinto ahora camina en perfecta armonía con el espíritu", "Cuatro girasoles: Los 4 elementos maduros y florecientes mirando al sol"]
+  },
+  {
+    id: "el-juicio",
+    number: 20,
+    roman: "XX",
+    name: "El Juicio",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "El despertar espiritual, el llamado vocacional definitivo, la resurrección a un nivel superior de conciencia y el perdón total.",
+    element: "Fuego / Plutón",
+    archetype: "El Renacimiento / El Toque de Clarín Cósmico",
+    keywordsUpright: ["Llamado espiritual", "Despertar vocacional", "Perdón y redención", "Evaluación liberadora", "Resurrección"],
+    keywordsReversed: ["Sordera al llamado", "Auto-juicio culposo", "Miedo a cambiar de vida", "Dudas vocacionales", "Aferrarse al pasado"],
+    visualObservation: "El arcángel Gabriel desciende en una nube celestial soplando una trompeta dorada adornada con un estandarte de cruz roja. Abajo, figuras desnudas (un hombre, una mujer y un niño) se levantan de tumbas abiertas en el mar con los brazos en alto en señal de gratitud.",
+    whatEyesSee: "¿Qué están haciendo? Se levantan de la oscuridad de la tumba respondiendo instantáneamente al llamado de la trompeta, libres de culpa y llenos de júbilo.",
+    formulaExplanation: "20 = La llamada final a la liberación antes de la culminación cósmica. La vida te pide dar el salto definitivo hacia tu propósito.",
+    learningFormula: "Escucha del llamado + Perdón del pasado = Resurrección a una vida auténtica",
+    uprightMeaning: "Sientes el llamado irresistible a reinventarte y dejar atrás viejas culpas. Es hora de asumir tu verdadera misión vital con la frente en alto.",
+    reversedMeaning: "Ignoras la voz interna que te pide cambiar de rumbo por miedo a las consecuencias o te quedas castigándote por errores pasados ya perdonados.",
+    reflectiveQuestion: "¿A qué nueva etapa de mi vida me está llamando mi alma que no puedo seguir ignorando?",
+    advice: "Perdónate por lo que no sabías antes: hoy escuchas la música y es momento de levantarte de tu tumba emocional.",
+    symbolism: ["Trompeta del arcángel: La vibración de la verdad superior que despierta la conciencia", "Tumbas en el agua: El inconsciente que libera todos los recuerdos olvidados", "Brazos abiertos: Disposición total a recibir la gracia"]
+  },
+  {
+    id: "el-mundo",
+    number: 21,
+    roman: "XXI",
+    name: "El Mundo",
+    arcana: "mayor",
+    septenary: 3,
+    septenaryName: "Septenario 3: Pruebas Espirituales y Liberación",
+    septenaryTheme: "La culminación del viaje del Loco: la integración total, la maestría espiritual, la completitud cósmica y la celebración de la totalidad.",
+    element: "Tierra / Saturno",
+    archetype: "La Totalidad Integrada / El Fin del Gran Ciclo",
+    keywordsUpright: ["Realización total", "Cierre triunfal", "Integración", "Éxito cósmico", "Viaje cumplido"],
+    keywordsReversed: ["Ciclo incompleto", "Falta de cierre", "Miedo a graduarse", "Atajos que impiden culminar", "Estancamiento final"],
+    visualObservation: "Una figura andrógina danzante envuelta en un manto púrpura sostiene dos varas doradas en el centro de una gran guirnalda ovalada de laurel atada con cintas rojas en forma de infinito. En las cuatro esquinas del cielo reposan los cuatro seres sagrados (hombre, águila, león, toro).",
+    whatEyesSee: "¿Qué está haciendo? Danza libremente en el centro del cosmos con perfecta armonía y gracia. Todo está en su sitio; no hay lucha, solo celebración.",
+    formulaExplanation: "21 = Cierra el Viaje del Loco y el tercer septenario. El Loco (0) que empezó inocente y desnudo ahora danza como el maestro del universo (21).",
+    learningFormula: "Viaje completado + Integración de los 4 elementos = Maestría y libertad absoluta",
+    uprightMeaning: "Has llegado a la meta. Culminación exitosa de un gran ciclo de vida, graduación personal y sensación de profunda plenitud.",
+    reversedMeaning: "Falta un pequeño paso o detalle para cerrar definitivamente un ciclo; no te detengas ahora en la puerta de meta.",
+    reflectiveQuestion: "¿Qué gran ciclo de mi vida se está completando y cómo puedo celebrarlo con orgullo humilde?",
+    advice: "Danza con la vida: has aprendido las lecciones del camino y estás listo para comenzar una nueva octava de evolución.",
+    symbolism: ["Guirnalda ovalada: El huevo cósmico y el portal dimensional superado", "Dos varas: El Mago que empezó con una vara ahora domina ambas polaridades", "4 seres en las esquinas: Los 4 elementos completamente integrados y en paz"]
+  }
+];
+
+// Minor Arcana definitions
+const suits = [
+  {
+    key: "bastos",
+    name: "Bastos",
+    element: "Fuego",
+    icon: "🔥",
+    area: "Ganas, entusiasmo, pasión, trabajo, impulso, acción",
+    color: "#E25822"
+  },
+  {
+    key: "copas",
+    name: "Copas",
+    element: "Agua",
+    icon: "💧",
+    area: "Sentimientos, amor, vínculos, intuición, duelos",
+    color: "#3B82F6"
+  },
+  {
+    key: "espadas",
+    name: "Espadas",
+    element: "Aire",
+    icon: "💨",
+    area: "Pensamientos, dudas, verdades, discusiones, ideas, intelecto, palabras, debates, comunicación, estrategias",
+    color: "#8B5CF6"
+  },
+  {
+    key: "oros",
+    name: "Oros",
+    element: "Tierra",
+    icon: "🌿",
+    area: "Dinero, cuerpo, casa, seguridad material",
+    color: "#10B981"
+  }
+];
+
+const numberDefinitions = {
+  1: {
+    name: "As (1)",
+    phase: "Inicio / Semilla",
+    desc: "El potencial concentrado, la oportunidad pura, el chispazo fundacional del elemento."
+  },
+  2: {
+    name: "Dos (2)",
+    phase: "Elección / Duda / Dualidad / Encrucijada / Planificación",
+    desc: "Dualidad, encrucijada, planificación entre opciones, equilibrio preliminar o indecisión."
+  },
+  3: {
+    name: "Tres (3)",
+    phase: "Expansión / Fruto",
+    desc: "Los primeros resultados visibles, trabajo coordinado, crecimiento y proyección."
+  },
+  4: {
+    name: "Cuatro (4)",
+    phase: "Estabilidad / Pausa",
+    desc: "Consolidación de cimientos, orden, seguridad pero riesgo de rigidez o estancamiento."
+  },
+  5: {
+    name: "Cinco (5)",
+    phase: "Crisis / Conflicto",
+    desc: "Pérdida temporal de armonía, choque, prueba de fuego, dificultad necesaria para madurar."
+  },
+  6: {
+    name: "Seis (6)",
+    phase: "Alivio / Transición",
+    desc: "Recuperación tras la tormenta, intercambio justo, viaje hacia aguas tranquilas, respiro."
+  },
+  7: {
+    name: "Siete (7)",
+    phase: "Prueba / Evaluación",
+    desc: "Poner a prueba lo logrado, reflexión estratégica, perseverancia frente al desafío."
+  },
+  8: {
+    name: "Ocho (8)",
+    phase: "Esfuerzo / Movimiento",
+    desc: "Dedicación constante, aceleración de acontecimientos, maestría mediante el trabajo regular."
+  },
+  9: {
+    name: "Nueve (9)",
+    phase: "Cosecha / Soledad",
+    desc: "Culminación personal, madurez íntima del proceso, satisfacción en solitario antes del cierre."
+  },
+  10: {
+    name: "Diez (10)",
+    phase: "Fin de ciclo / Límite",
+    desc: "La máxima saturación de la energía del palo; fin inevitable para dar paso a lo nuevo."
+  }
+};
+
+const courtDefinitions = {
+  sota: {
+    rankName: "Sota",
+    title: "El Aprendiz / La Semilla / El Mensajero",
+    attitude: "Curiosidad, entusiasmo juvenil, empezar a aprender algo, mensajes o noticias nuevas. Todavía no tiene experiencia, pero tiene ganas."
+  },
+  caballo: {
+    rankName: "Caballo",
+    title: "El Conquistador / El Movimiento / La Acción",
+    attitude: "Impulso, avance veloz, salir a buscar algo, dinamismo. Puede pecar de impaciente o precipitado, pero pone las cosas a rodar."
+  },
+  reina: {
+    rankName: "Reina",
+    title: "La Maestra Interior / La Contención / La Madurez Receptiva",
+    attitude: "Sabiduría emocional y profunda hacia adentro. Nutre, sostiene, protege y comprende esa energía con empatía y serenidad."
+  },
+  rey: {
+    rankName: "Rey",
+    title: "El Líder / La Autoridad / El Dominio Externo",
+    attitude: "Control, estructura, toma de decisiones y orden hacia el mundo exterior. Manda, organiza y asume la responsabilidad final."
+  }
+};
+
+// Complete data for the 56 Minor Arcana cards
+const minorCardsDetail = {
+  // BASTOS (Fuego)
+  "as-de-bastos": {
+    visualObservation: "Una mano divina que surge de una nube sostiene una vara de madera viva florecida con hojas verdes que caen en el aire, con un castillo en una colina lejana.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Una mano emerge del cielo ofreciendo una vara rebosante de savia viva. No hay nadie sosteniéndola aún; es un regalo puro esperando ser tomado.",
+    formula: "Bastos (Fuego/Pasión) + 1 (Inicio/Semilla) = La chispa fundacional de un proyecto, entusiasmo repentino o impulso vital",
+    uprightMeaning: "Nueva inspiración ardiente, ganas renovadas de emprender, pasión y energía vital desbordante. Toma la iniciativa ya.",
+    reversedMeaning: "Falta de chispa, retrasos en arrancar proyectos, frustración creativa o energía dispersada sin concretar.",
+    question: "¿Qué proyecto me enciende el corazón pero aún no me he atrevido a iniciar?",
+    advice: "Agarra esa vara con decisión: la inspiración premia a quien se pone en movimiento.",
+    keywordsUpright: ["Inspiración", "Ganas de actuar", "Chispa divina", "Fuerza creadora", "Nuevo proyecto"],
+    keywordsReversed: ["Desgana", "Retraso de planes", "Falta de iniciativa", "Bloqueo pasional"]
+  },
+  "2-de-bastos": {
+    visualObservation: "Un hombre bien vestido observa desde las almenas de su castillo un vasto mar sosteniendo un pequeño globo terráqueo en la mano y apoyándose en una vara plantada en la pared.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Mira hacia el horizonte con el mundo en la palma de su mano, calculando su próximo gran viaje desde la seguridad de su fortaleza.",
+    formula: "Bastos (Fuego/Acción) + 2 (Elección/Planificación) = Planificar la expansión futura, elegir entre quedarse seguro o conquistar nuevos horizontes",
+    uprightMeaning: "Planificación estratégica con visión a largo plazo. Tienes una base sólida y ahora debes decidir cómo y cuándo expandirte al mundo exterior.",
+    reversedMeaning: "Miedo a abandonar la zona de confort, falta de previsión o dudas paralizantes sobre qué paso dar.",
+    question: "¿Me conformo con lo que ya logré o me atrevo a explorar nuevos horizontes?",
+    advice: "Tus cimientos son seguros: tómate el tiempo para trazar el mapa antes de zarpar.",
+    keywordsUpright: ["Planificación", "Visión de futuro", "El mundo en tus manos", "Decisión audaz"],
+    keywordsReversed: ["Miedo a salir", "Mala planificación", "Duda paralizante", "Confort limitante"]
+  },
+  "3-de-bastos": {
+    visualObservation: "Un viajero con túnica roja mira de espaldas hacia el mar donde navegan sus propios barcos, apoyado firmemente entre tres varas plantadas en tierra firme.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Contempla cómo sus barcos zarpan o regresan cargados. Ya no está planificando en el castillo; está presenciando los primeros frutos en movimiento.",
+    formula: "Bastos (Fuego/Acción) + 3 (Expansión/Fruto) = Los primeros frutos de la iniciativa, proyectos que avanzan con éxito y visión internacional",
+    uprightMeaning: "Tus esfuerzos iniciales comienzan a rendir frutos. Tus barcos están navegando; es momento de confiar en tu visión y prepararte para mayores oportunidades.",
+    reversedMeaning: "Frustración por retrasos en envíos o respuestas, decepción con socios o proyectos que se quedan cortos.",
+    question: "¿Hacia qué nuevas metas puedo guiar la inercia positiva que ya he generado?",
+    advice: "Mantén la mirada en el horizonte lejano; no te conformes con pequeños logros locales.",
+    keywordsUpright: ["Expansión", "Frutos tempranos", "Comercio y viajes", "Visión abierta", "Progreso"],
+    keywordsReversed: ["Retrasos", "Obstáculos imprevistos", "Visión corta", "Frustración"]
+  },
+  "4-de-bastos": {
+    visualObservation: "Dos figuras celebran alegres vestidas de fiesta bajo una pérgola de cuatro varas floridas atadas con guirnaldas de frutas, con un castillo acogedor detrás.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Una pareja alza ramos de flores celebrando un hito festivo (boda, bienvenida, fiesta de cosecha) con música y comunidad.",
+    formula: "Bastos (Fuego/Pasión) + 4 (Estabilidad/Pausa) = Celebración de una meta alcanzada, estabilidad en el hogar y alegría compartida",
+    uprightMeaning: "Momento de fiesta, boda, inauguración, reunión familiar cálida y sensación de haber consolidado un hito hermoso en tu vida personal o laboral.",
+    reversedMeaning: "Tensión en el hogar, celebraciones canceladas, sensación de no sentirse del todo bienvenido o retraso en una mudanza.",
+    question: "¿Cómo puedo celebrar y agradecer los logros y la armonía que hoy tengo en mi círculo íntimo?",
+    advice: "Disfruta de la fiesta con quienes amas: consolidar la alegría es el mejor combustible para seguir.",
+    keywordsUpright: ["Celebración", "Armonía en el hogar", "Festejo de hitos", "Bienvenida", "Paz comunitaria"],
+    keywordsReversed: ["Tensión familiar", "Fiesta cancelada", "Inseguridad doméstica", "Choque en casa"]
+  },
+  "5-de-bastos": {
+    visualObservation: "Cinco jóvenes en un campo abierto agitan y cruzan varas de madera en una lucha enérgica y desordenada.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Están forcejeando en un combate confuso; no parece una guerra mortal, sino una competencia deportiva o una discusión ruidosa donde todos quieren mandar.",
+    formula: "Bastos (Fuego/Acción) + 5 (Crisis/Conflicto) = Conflicto de voluntades, competencia, choque de egos o lucha por sobresalir",
+    uprightMeaning: "Competencia intensa, desacuerdos de equipo, choque de egos o debate encendido. Canaliza esa fricción deportivamente sin herir a nadie.",
+    reversedMeaning: "Fin de las peleas inútiles, resolución de un conflicto o, al contrario, evasión cobarde de tensiones que necesitaban ser ventiladas.",
+    question: "¿Estoy gastando energía en peleas por orgullo en vez de colaborar para la meta real?",
+    advice: "No te tomes la rivalidad a pecho: úsala como un gimnasio para afilar tus mejores talentos.",
+    keywordsUpright: ["Competencia", "Choque de egos", "Disputa", "Tensión", "Entrenamiento enérgico"],
+    keywordsReversed: ["Paz acordada", "Evitar el conflicto", "Cansancio de pelear", "Rivalidad sucia"]
+  },
+  "6-de-bastos": {
+    visualObservation: "Un jinete coronado de laurel cabalga triunfante sobre un caballo blanco cubierto con manto azul, flanqueado por una multitud que sostiene varas en señal de júbilo.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Avanza victorioso entre vítores y aplausos, llevando una corona de laurel atada en lo alto de su vara.",
+    formula: "Bastos (Fuego/Acción) + 6 (Alivio/Transición armónica) = Reconocimiento público, victoria tras la lucha, aplauso y éxito merecido",
+    uprightMeaning: "Victoria, reconocimiento público, aprobación de tu trabajo y celebración del éxito. La gente reconoce tu valor y tu liderazgo.",
+    reversedMeaning: "Caída del pedestal, soberbia castigada, envidias ajenas o sensación de que no te reconocen lo que te mereces.",
+    question: "¿Acepto los elogios con gratitud y humildad sin dejar que inflen mi ego?",
+    advice: "Disfruta del aplauso merecido, pero recuerda que el caballo sobre el que montas debe seguir caminando.",
+    keywordsUpright: ["Victoria", "Reconocimiento público", "Éxito", "Orgullo sano", "Liderazgo celebrado"],
+    keywordsReversed: ["Soberbia", "Falta de reconocimiento", "Envidia", "Caída de popularidad"]
+  },
+  "7-de-bastos": {
+    visualObservation: "Un hombre de pie sobre una colina rocosa se defiende vigorosamente con una vara contra seis varas que emergen desde abajo amenazando su posición.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Lucha solo desde lo alto para proteger su terreno frente a múltiples contrincantes que intentan destronarlo.",
+    formula: "Bastos (Fuego/Acción) + 7 (Prueba/Evaluación) = Defender tu posición con coraje, mantenerte firme ante la presión o las críticas",
+    uprightMeaning: "Tienes la ventaja moral o estratégica, pero debes defender tu postura con firmeza ante quienes intentan quitarte lo ganado. No cedas.",
+    reversedMeaning: "Sentirte abrumado por las demandas de los demás, rendirte antes de tiempo o agotamiento por defender una causa perdida.",
+    question: "¿Qué principios o logros valen la pena que yo defienda con uñas y dientes?",
+    advice: "Estás en la cima por mérito propio: mantén la guardia alta y confía en tu fuerza.",
+    keywordsUpright: ["Defensa firme", "Coraje ante la crítica", "Mantener la colina", "Perseverancia"],
+    keywordsReversed: ["Abrumado", "Rendición", "Inseguridad", "Ceder terreno fácilmente"]
+  },
+  "8-de-bastos": {
+    visualObservation: "Ocho varas de madera cruzan el aire despejado a toda velocidad cayendo diagonalmente sobre un paisaje verde y pacífico con un río.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? No hay personajes visibles; las varas vuelan a través del cielo despejado como flechas veloces acercándose a su destino.",
+    formula: "Bastos (Fuego/Acción) + 8 (Esfuerzo/Movimiento veloz) = Acontecimientos que se aceleran, noticias inminentes, avance fulminante sin obstáculos",
+    uprightMeaning: "Todo se acelera: mensajes urgentes, viajes repentinos, respuestas rápidas y proyectos que toman una velocidad imparable. Actúa con agilidad.",
+    reversedMeaning: "Retrasos exasperantes, malentendidos en la comunicación, precipitación descontrolada o pánico por exceso de prisa.",
+    question: "¿Estoy listo para recibir y gestionar el aluvión de cambios que se avecinan?",
+    advice: "El aire está despejado: afina tus reflejos y déjate llevar por el impulso dinámico.",
+    keywordsUpright: ["Rapidez", "Noticias inminentes", "Viajes rápidos", "Impulso imparable", "Claridad en el aire"],
+    keywordsReversed: ["Retrasos frustrantes", "Mensajes confusos", "Frenazo súbito", "Precipitación"]
+  },
+  "9-de-bastos": {
+    visualObservation: "Un soldado vendado en la cabeza se apoya con cautela sobre una vara, con la mirada vigilante hacia un lado y una empalizada de ocho varas plantadas a su espalda.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Está herido y cansado tras una dura batalla, pero sigue de pie, vigilando el perímetro listo para el último embate.",
+    formula: "Bastos (Fuego/Pasión) + 9 (Cosecha/Soledad resiliente) = Resiliencia ante el cansancio, resistencia tenaz en la última recta",
+    uprightMeaning: "Has librado duras batallas y estás exhausto, pero estás a punto de llegar a la meta. Mantén la guardia un poco más; tu fortaleza es legendaria.",
+    reversedMeaning: "Paranoia injustificada, ver enemigos donde no los hay, terquedad defensiva o colapso por negarte a pedir ayuda.",
+    question: "¿Estoy alerta por prudencia sabia o estoy viviendo a la defensiva por heridas del pasado?",
+    advice: "Falta muy poco: una última dosis de valentía te dará la victoria definitiva.",
+    keywordsUpright: ["Resiliencia", "Vigilancia", "Último esfuerzo", "Coraje herido pero firme"],
+    keywordsReversed: ["Paranoia", "Agotamiento extremo", "Defensividad tóxica", "Tirarla toalla"]
+  },
+  "10-de-bastos": {
+    visualObservation: "Un hombre encorvado camina trabajosamente hacia una ciudad lejana cargando sobre su espalda un pesado haz de diez varas largas que le tapan la vista.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Avanza con dificultad casi doblado en dos; carga tantas cosas a la vez que no puede ni ver el camino que pisa.",
+    formula: "Bastos (Fuego/Acción) + 10 (Fin de ciclo/Límite de saturación) = Sobrecarga de responsabilidades, estrés por abarcar demasiado, agotamiento final",
+    uprightMeaning: "Has asumido demasiadas cargas y obligaciones sobre tus hombros. Es hora de aprender a delegar o soltar compromisos antes de que tu cuerpo quiebre.",
+    reversedMeaning: "Alivio de responsabilidades, soltar peso muerto, o derrumbe físico y mental por no haber querido pedir ayuda a tiempo.",
+    question: "¿Qué cargas ajenas estoy llevando que me impiden disfrutar de mi propio camino?",
+    advice: "Descarga varas: el éxito no consiste en morir aplastado por el propio trabajo.",
+    keywordsUpright: ["Sobrecarga", "Estrés laboral", "Agotamiento", "Exceso de deberes", "Cargar con todo"],
+    keywordsReversed: ["Aprender a delegar", "Liberación de peso", "Colapso por terquedad", "Alivio"]
+  },
+  "sota-de-bastos": {
+    visualObservation: "Un joven entusiasta con traje decorado con salamandras sostiene una vara con ambas manos sobre un desierto soleado, mirándola fijamente como si escuchara su secreto.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Contempla la vara viva con fascinación y asombro juvenil, listo para explorar el mundo sin miedo.",
+    formula: "Bastos (Fuego) + Sota (Aprendiz/Mensajero) = Curiosidad entusiasta, empezar a formarse en una pasión, noticias estimulantes",
+    uprightMeaning: "Una noticia emocionante, una nueva pasión o afición que te despierta curiosidad. Ganas de aprender y probar cosas nuevas con ilusión juvenil.",
+    reversedMeaning: "Inmadurez, caprichos infantiles, aburrimiento rápido o mensajes desalentadores que pinchan el globo del entusiasmo.",
+    question: "¿Qué tema o actividad me hace sentir como un aprendiz lleno de asombro?",
+    advice: "Déjate llevar por la curiosidad: no necesitas ser un experto para empezar a jugar.",
+    keywordsUpright: ["Entusiasmo juvenil", "Noticias apasionantes", "Curiosidad creativa", "Ganas de aprender"],
+    keywordsReversed: ["Inconstancia", "Capricho", "Noticias frustrantes", "Falta de perseverancia"]
+  },
+  "caballo-de-bastos": {
+    visualObservation: "Un caballero audaz con armadura y cota de plumas de fuego galopa furiosamente sobre un caballo alazán que se encabrita en el desierto con la vara en alto.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Sale disparado hacia la aventura sin pensarlo dos veces; el caballo salta enérgico impulsado por pura adrenalina.",
+    formula: "Bastos (Fuego) + Caballo (Acción veloz/Conquistador) = Impulso arrollador, viaje aventurero, pasión enérgica pero impaciente",
+    uprightMeaning: "Acción fulgurante, pasión desbordante, mudanzas o viajes repentinos. Pone las cosas en marcha a una velocidad tremenda con gran carisma.",
+    reversedMeaning: "Precipitación, arranques de mal genio, empezar con fuego y abandonar a mitad de camino por falta de constancia.",
+    question: "¿Estoy actuando con valentía decidida o solo con impaciencia impulsiva?",
+    advice: "Aprovecha la energía del galope, pero procura no incendiar el bosque a tu paso.",
+    keywordsUpright: ["Aventura", "Pasión enérgica", "Audacia", "Movimiento rápido", "Carisma ardiente"],
+    keywordsReversed: ["Impaciencia destructiva", "Arranques de ira", "Inconstancia", "Agresividad"]
+  },
+  "reina-de-bastos": {
+    visualObservation: "Una mujer radiante y segura se sienta en un trono tallado con leones, sosteniendo un girasol maduro en una mano y una vara en la otra; a sus pies descansa un gato negro amistoso.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se sienta con las piernas abiertas con total confianza y calidez, sonriendo al mundo con una presencia magnética y acogedora.",
+    formula: "Bastos (Fuego) + Reina (Maestra Interior/Madurez Receptiva) = Confianza en uno mismo, magnetismo cálido, liderazgo inspirador y vitalidad",
+    uprightMeaning: "Seguridad personal arrolladora, calidez, generosidad y alegría de vivir. Inspiras a otros con tu luz propia y tu capacidad de gestionar proyectos con una sonrisa.",
+    reversedMeaning: "Envidia, celos, dramatismo excesivo o manipulación para ser el centro de atención constante.",
+    question: "¿Cómo puedo irradiar mi autenticidad y alegría sin pedir disculpas por brillar?",
+    advice: "Confía en tu carisma: cuando eres fiel a tu fuego interno, atraes la abundancia por pura gravedad.",
+    keywordsUpright: ["Confianza magnética", "Calidez", "Independencia", "Alegría vital", "Liderazgo cálido"],
+    keywordsReversed: ["Dramatismo", "Celos", "Inseguridad encubierta", "Exigencia de protagonismo"]
+  },
+  "rey-de-bastos": {
+    visualObservation: "Un rey maduro coronado con llamas se sienta en un trono adornado con salamandras y leones sosteniendo con firmeza una vara florecida; una pequeña salamandra reposa leal a sus pies.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Mira hacia un lado con porte de estadista visionario listo para dirigir grandes empresas y motivar a su pueblo con visión de futuro.",
+    formula: "Bastos (Fuego) + Rey (Líder/Autoridad Externa) = Liderazgo visionario, capacidad ejecutiva, emprender con éxito y motivar a equipos",
+    uprightMeaning: "Líder nato, empresario visionario, capacidad de transformar ideas en realidades tangibles y de inspirar a otros con su determinación inquebrantable.",
+    reversedMeaning: "Autoritarismo despiadado, intolerancia con los errores ajenos, arrogancia o promesas grandilocuentes que no se cumplen.",
+    question: "¿Qué gran visión me atrevo a liderar asumiendo la responsabilidad total de sus resultados?",
+    advice: "Lidera con el ejemplo y la generosidad: el verdadero rey no impone, inspira.",
+    keywordsUpright: ["Liderazgo visionario", "Emprendimiento firme", "Carisma inspirador", "Determinación"],
+    keywordsReversed: ["Tiranía", "Arrogancia", "Falta de empatía", "Promesas vacías"]
+  },
+
+  // COPAS (Agua)
+  "as-de-copas": {
+    visualObservation: "Una mano que surge de una nube sostiene un cáliz dorado del cual brotan cinco chorros continuos de agua que caen en un estanque lleno de nenúfares; una paloma blanca deposita una hostia sagrada en la copa.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? El cáliz rebosa agua bendita inagotable. No se pide nada a cambio; es un manantial de amor puro listo para alimentar el corazón.",
+    formula: "Copas (Agua/Sentimientos) + 1 (Inicio/Semilla) = El nacimiento de un sentimiento puro, apertura del corazón, nuevo amor o despertar intuitivo",
+    uprightMeaning: "Apertura emocional absoluta, inicio de un romance hermoso, reconciliación profunda, paz espiritual o una oleada de creatividad inspirada por el amor.",
+    reversedMeaning: "Bloqueo emocional, miedo a mostrar afecto por temor a salir herido, o tristeza contenida que no se permite desahogar.",
+    question: "¿Estoy dispuesto a abrir las compuertas de mi corazón y recibir el amor que la vida me ofrece?",
+    advice: "Baja las defensas: permitirte ser vulnerable es la mayor demostración de valentía emocional.",
+    keywordsUpright: ["Amor naciente", "Apertura del corazón", "Paz interior", "Intuición despierta", "Sanación"],
+    keywordsReversed: ["Corazón cerrado", "Miedo a sentir", "Desbordamiento emocional", "Tristeza reprimida"]
+  },
+  "2-de-copas": {
+    visualObservation: "Un joven y una doncella intercambian copas mirándose a los ojos con ternura, mientras sobre ellos flota el caduceo de Hermes coronado por una cabeza de león alado.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Brindan mirándose de igual a igual, prometiéndose afecto mutuo y sellando una alianza profunda de complicidad.",
+    formula: "Copas (Agua/Vínculos) + 2 (Elección/Dualidad armónica) = Conexión de almas, pacto de reciprocidad, entendimiento mutuo y romance honesto",
+    uprightMeaning: "Atracción mutua, química sincera, acuerdo de beneficio mutuo en sociedades o reconciliación honesta entre dos personas que se aprecian.",
+    reversedMeaning: "Desconexión, falta de reciprocidad, malentendidos de pareja o discusiones donde nadie da su brazo a torcer.",
+    question: "¿Existe verdadero equilibrio entre lo que doy y lo que recibo en mis relaciones más cercanas?",
+    advice: "Celebra el encuentro sincero con el otro: en la mirada honesta del compañero encontramos nuestro propio reflejo.",
+    keywordsUpright: ["Conexión sincera", "Amor mutuo", "Alianza armónica", "Reciprocidad", "Química"],
+    keywordsReversed: ["Desencuentro", "Falta de armonía", "Desequilibrio afectivo", "Ruptura de pacto"]
+  },
+  "3-de-copas": {
+    visualObservation: "Tres mujeres danzan en círculo en un campo fértil brindando con sus copas en alto en señal de alegría compartida, rodeadas de flores y racimos de uvas maduras.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Bailan juntas descalzas, riendo y celebrando la amistad y la abundancia de la vida en comunidad.",
+    formula: "Copas (Agua/Sentimientos) + 3 (Expansión/Fruto) = Celebración entre amigos, red de apoyo afectivo, fiesta comunitaria y alegría compartida",
+    uprightMeaning: "Reunión con amigas del alma, fiesta, brindis por una buena noticia, apoyo incondicional de tu grupo cercano y sensación de hermandad.",
+    reversedMeaning: "Cotilleos, exclusión dentro de un grupo de amistades, excesos con el alcohol o fiestas vacías que dejan un vacío interior.",
+    question: "¿Quiénes son esas personas leales con quienes puedo celebrar mis logros sin envidias?",
+    advice: "Busca a tu tribu y brinda por la amistad: la alegría compartida se multiplica por mil.",
+    keywordsUpright: ["Amistad entrañable", "Celebración compartida", "Hermandad", "Fiesta de apoyo", "Alegría"],
+    keywordsReversed: ["Chismes", "Falsedad en el grupo", "Aislamiento social", "Exceso festivo"]
+  },
+  "4-de-copas": {
+    visualObservation: "Un joven sentado bajo un árbol con los brazos y piernas cruzados mira con desdén o apatía tres copas puestas en el suelo, mientras una mano mágica en el aire le ofrece una cuarta copa que él ignora.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Está ensimismado en su propio aburrimiento o descontento; no levanta la mirada para ver el regalo celestial que tiene enfrente.",
+    formula: "Copas (Agua/Emociones) + 4 (Estabilidad/Pausa estancada) = Apatía afectiva, aburrimiento, ceguera ante nuevas oportunidades por desgana",
+    uprightMeaning: "Desmotivación, sensación de que nada te llena o que la rutina te asfixia. Estás tan enfocado en lo que te falta o te aburre que no ves una oportunidad hermosa a tu lado.",
+    reversedMeaning: "Despertar del letargo, volver a ilusionarte con una propuesta y agradecer los regalos que antes pasabas por alto.",
+    question: "¿Qué regalo o gesto de cariño estoy ignorando por estar encerrado en mi propia queja?",
+    advice: "Abre los ojos y descruza los brazos: la vida te está ofreciendo algo nuevo si dejas de mirar al suelo.",
+    keywordsUpright: ["Apatía", "Aburrimiento", "Oportunidad ignorada", "Desencanto", "Ensimismamiento"],
+    keywordsReversed: ["Despertar de la desgana", "Nueva ilusión", "Aceptación de ofertas", "Gratitud"]
+  },
+  "5-de-copas": {
+    visualObservation: "Una figura con capa negra larga mira cabizbaja tres copas derramadas en el suelo de las que brota vino tinto; detrás de ella, sin que las vea, permanecen dos copas llenas de pie.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Llora y se lamenta por lo que se ha caído al suelo, dándole la espalda a las dos copas que siguen intactas y al puente que cruza hacia un castillo seguro.",
+    formula: "Copas (Agua/Emociones) + 5 (Crisis/Duelo) = Tristeza por una pérdida, duelo afectivo, decepción amorosa pero con rescate posible",
+    uprightMeaning: "Lamento por lo que no pudo ser: un desengaño amoroso, una decepción o un duelo necesario. Es natural llorar, pero recuerda que aún no lo has perdido todo.",
+    reversedMeaning: "Comienzo de la recuperación emocional, secarse las lágrimas, darse la vuelta y valorar lo que aún sigue vivo y de pie.",
+    question: "¿Sigo mirando el vaso derramado o estoy listo para darme la vuelta y abrazar lo que queda?",
+    advice: "Permítete el duelo, pero no te quedes a vivir en la queja: aún quedan dos copas llenas esperando por ti.",
+    keywordsUpright: ["Duelo emocional", "Lamento por el pasado", "Decepción afectiva", "Tristeza", "Pérdida"],
+    keywordsReversed: ["Sanación del duelo", "Aceptar la pérdida", "Mirar adelante", "Consuelo y esperanza"]
+  },
+  "6-de-copas": {
+    visualObservation: "Un niño con ropas de época le ofrece con ternura una copa llena de flores blancas a una niña pequeña en el patio de una vieja casa solariega con un guardia vigilando al fondo.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Un gesto de cariño infantil, inocente y generoso en un rincón que evoca recuerdos entrañables de la niñez.",
+    formula: "Copas (Agua/Afectos) + 6 (Alivio/Reconciliación dulce) = Recuerdos de la infancia, nostalgia sana, reencuentro con un viejo amor o ternura inocente",
+    uprightMeaning: "Regreso al pasado con dulzura: reconciliación con alguien de tu historia, reconexión con tu niño interior, recuerdos familiares entrañables o gestos sencillos de bondad.",
+    reversedMeaning: "Vivir anclado en la nostalgia del pasado, negarte a madurar o descubrir que idealizaste un recuerdo que no era tan perfecto.",
+    question: "¿Qué recuerdo o sueño de mi infancia puede inspirar mi ternura el día de hoy?",
+    advice: "Nutre tu presente con la inocencia y bondad del niño que fuiste.",
+    keywordsUpright: ["Nostalgia dulce", "Niño interior", "Inocencia afectiva", "Viejos amigos", "Ternura"],
+    keywordsReversed: ["Atrapado en el pasado", "Idealización ingenua", "Negativa a crecer", "Madurez forzada"]
+  },
+  "7-de-copas": {
+    visualObservation: "Un hombre en sombras contempla atónito siete copas que flotan entre nubes mágicas, cada una conteniendo algo distinto: un castillo, joyas, laureles, un dragón, una cabeza humana, una serpiente y una figura velada luminosa.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Mira fascinado pero confundido el abanico de visiones fantásticas, incapaz de decidirse cuál es real y cuál es una trampa mental.",
+    formula: "Copas (Agua/Emociones) + 7 (Prueba/Evaluación de deseos) = Ilusiones engañosas, castillos en el aire, confusión ante demasiadas fantasías o tentaciones",
+    uprightMeaning: "Demasiadas opciones irreales, ensoñación excesiva, castillos en el aire o desearlo todo sin estar dispuesto a comprometerte con nada concreto. Baja a la tierra.",
+    reversedMeaning: "Claridad mental que disipa las fantasías vacías; elegir una meta realista y desechar espejismos engañosos.",
+    question: "¿Estoy persiguiendo un deseo real del alma o una simple fantasía que me distrae del compromiso?",
+    advice: "No elijas con la niebla del deseo impulsivo: examina qué hay detrás de cada copa antes de beber.",
+    keywordsUpright: ["Fantasía", "Castillos en el aire", "Ilusión engañosa", "Confusión de deseos", "Espejismo"],
+    keywordsReversed: ["Claridad de objetivos", "Aterrizar ideas", "Despertar del engaño", "Elección lúcida"]
+  },
+  "8-de-copas": {
+    visualObservation: "Una figura con capa roja y báculo se aleja de espaldas en plena noche, ascendiendo por un sendero pedregoso hacia la montaña, dejando atrás ocho copas cuidadosamente apiladas.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se marcha voluntariamente en silencio bajo una luna en eclipse; abandona lo que construyó porque comprende que ya no le llena el alma.",
+    formula: "Copas (Agua/Emociones) + 8 (Esfuerzo/Movimiento de retiro) = Dejar atrás lo que ya no nutre, búsqueda de un sentido más profundo, partida voluntaria",
+    uprightMeaning: "Decisión madura de marcharte de una situación, relación o trabajo que, aunque estable, ya no alimenta tu espíritu. Emprendes un viaje hacia algo más auténtico.",
+    reversedMeaning: "Miedo a soltar y quedarte atrapado en lo conocido por comodidad; o huir precipitadamente sin haber intentado resolver las cosas.",
+    question: "¿A qué situación le he entregado todo lo que tenía y ahora debo despedirme con dignidad?",
+    advice: "Acepta que algunas etapas terminan: marcharte con gratitud es un acto supremo de amor propio.",
+    keywordsUpright: ["Partida consciente", "Soltar el pasado", "Búsqueda espiritual", "Trascender el apego", "Madurez"],
+    keywordsReversed: ["Quedarse por miedo", "Resistencia a irse", "Huida cobarde", "Aferramiento tóxico"]
+  },
+  "9-de-copas": {
+    visualObservation: "Un hombre rollizo y satisfecho con ropas elegantes se sienta con los brazos cruzados y una amplia sonrisa frente a una mesa semicircular cubierta con tela azul donde lucen nueve copas doradas.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Muestra orgulloso su colección de copas como quien disfruta de un banquete privado, irradiando satisfacción y bienestar pleno.",
+    formula: "Copas (Agua/Emociones) + 9 (Cosecha/Satisfacción íntima) = El deseo cumplido, satisfacción emocional, bienestar y disfrute sensorial",
+    uprightMeaning: "La carta del 'deseo concedido'. Momento de satisfacción emocional, dicha, tranquilidad con uno mismo y goce de los placeres de la vida.",
+    reversedMeaning: "Autocomplacencia excesiva, gula, presumir de bienestar vacío o decepción al comprobar que conseguir lo deseado no trajo la felicidad prometida.",
+    question: "¿Sé disfrutar con humildad y gratitud de las bendiciones que hoy colman mi vida?",
+    advice: "Sonríe y saborea tu momento: te has ganado este banquete de paz y contento.",
+    keywordsUpright: ["Deseo cumplido", "Satisfacción plena", "Alegría interior", "Bienestar", "Gratitud gozosa"],
+    keywordsReversed: ["Autocomplacencia", "Vanidad", "Vacío tras el éxito", "Excesos materiales"]
+  },
+  "10-de-copas": {
+    visualObservation: "Una pareja abrazada alza los brazos con devoción hacia un arcoíris en el cielo formado por diez copas resplandecientes, mientras sus dos hijos pequeños juegan y bailan frente a una acogedora casa de campo rodeada de un río.",
+    whatEyesSee: "¿Qué está haciendo la familia? Celebran juntos contemplando el cielo en señal de plenitud; los niños juegan inocentes y todo respira dicha pacífica.",
+    formula: "Copas (Agua/Vínculos) + 10 (Fin de ciclo/Plenitud máxima) = Felicidad compartida duradera, armonía familiar, plenitud afectiva y amor consolidado",
+    uprightMeaning: "La máxima culminación del amor y los vínculos: armonía en el hogar, paz duradera, compromiso sincero y bendición compartida con quienes amas.",
+    reversedMeaning: "Conflictos domésticos, distanciamiento entre familiares, apariencias de 'familia perfecta' que ocultan tensiones dolorosas.",
+    question: "¿Qué significa para mí un verdadero hogar y cómo lo estoy cultivando día a día?",
+    advice: "Valora y protege la paz de tu círculo íntimo: ese es el verdadero tesoro al final del arcoíris.",
+    keywordsUpright: ["Felicidad familiar", "Hogar en paz", "Amor verdadero", "Plenitud compartida", "Bendición"],
+    keywordsReversed: ["Tensiones domésticas", "Desunión familiar", "Falsas apariencias", "Distanciamiento"]
+  },
+  "sota-de-copas": {
+    visualObservation: "Un paje joven con túnica adornada con lirios sostiene una copa de la que asoma curiosamente un pequeño pez azul que parece hablarle, con olas danzantes a su espalda.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Mira con deleite e inocencia el pececito que brota de su copa, escuchando con asombro poético el mensaje del agua.",
+    formula: "Copas (Agua) + Sota (Aprendiz/Mensajero) = Mensaje de cariño, intuición naciente, sensibilidad artística y ternura sincera",
+    uprightMeaning: "Una propuesta tierna, un mensaje cariñoso, una disculpa sincera o el despertar de tu sensibilidad artística. Conexión dulce con la intuición.",
+    reversedMeaning: "Inmadurez emocional, hipersensibilidad dramática, caprichos amorosos o sentirse herido por cualquier tontería.",
+    question: "¿Qué mensaje poético o intuitivo me está susurrando mi corazón?",
+    advice: "No reprimas tu lado sensible: escuchar con dulzura abre puertas que la fuerza jamás podrá forzar.",
+    keywordsUpright: ["Mensaje de amor", "Sensibilidad poética", "Intuición tierna", "Inocencia afectiva"],
+    keywordsReversed: ["Drama infantil", "Vulnerabilidad extrema", "Inmadurez", "Fantasía desconectada"]
+  },
+  "caballo-de-copas": {
+    visualObservation: "Un caballero gentil con armadura cubierta de peces alados avanza en un caballo blanco al paso tranquilo junto a un río, ofreciendo con elegancia una copa dorada.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Cabalga despacio y con porte romántico, no a la carga violenta; su misión es entregar una copa de amor o una invitación formal.",
+    formula: "Copas (Agua) + Caballo (Movimiento/Conquistador afectivo) = Llegada de una propuesta romántica, seguir el dictado del corazón con idealismo",
+    uprightMeaning: "El caballero andante: llegada de un enamorado, una invitación hermosa, un gesto de reconciliación o perseguir un sueño artístico con devoción.",
+    reversedMeaning: "Seductor poco confiable, promesas vacías que se las lleva el viento, excesivo sentimentalismo que nubla el sentido común.",
+    question: "¿Estoy dispuesto a seguir el camino de mi corazón con elegancia y honestidad?",
+    advice: "Ofrece tu copa con honestidad, pero asegúrate de que tus actos respalden tus palabras bonitas.",
+    keywordsUpright: ["Propuesta romántica", "Idealismo", "Invitación hermosa", "Sinceridad poética", "Diplomacia"],
+    keywordsReversed: ["Seductor tramposo", "Promesas rotas", "Desilusión afectiva", "Manipulación emocional"]
+  },
+  "reina-de-copas": {
+    visualObservation: "Una reina hermosa coronada con adornos marinos se sienta al borde de las olas en un trono labrado con querubines y sirenas, sosteniendo con ambas manos un cáliz cerrado muy elaborado.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Contempla fijamente el cáliz cerrado con mirada penetrante y comprensiva; custodia en su interior los secretos más hondos del alma humana.",
+    formula: "Copas (Agua) + Reina (Maestra Interior/Contención y Sabiduría) = Empatía profunda, sanación emocional, intuición mística y amor incondicional",
+    uprightMeaning: "Madre nutricia del alma: comprensión sin juicios, don de escuchar, intuición certera y capacidad de sanar con la sola presencia afectuosa.",
+    reversedMeaning: "Codependencia, chantaje emocional, ahogarse en un mar de lágrimas ajenas o proyectar inseguridades en los demás.",
+    question: "¿Cómo puedo cuidar y nutrir a los demás sin olvidarme de poner a salvo mi propia vasija emocional?",
+    advice: "Confía en lo que sientes: tu corazón ve con una claridad que los ojos racionales no alcanzan a sospechar.",
+    keywordsUpright: ["Empatía profunda", "Intuición certera", "Amor incondicional", "Escucha sanadora", "Paz interior"],
+    keywordsReversed: ["Manipulación afectiva", "Codependencia", "Hipersensibilidad tóxica", "Ahogo emocional"]
+  },
+  "rey-de-copas": {
+    visualObservation: "Un rey con túnica azul y manto púrpura se sienta en un trono de piedra que flota en medio de un mar agitado; en una mano lleva un cetro y en la otra una copa, mientras un pez y un barco navegan a su alrededor.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Permanece en perfecto equilibrio y calma sobre las aguas movidas; no se inmuta ni se hunde ante el oleaje del mar.",
+    formula: "Copas (Agua) + Rey (Líder/Autoridad de las Emociones) = Madurez emocional, serenidad ante la crisis, diplomacia sabia y contención afectiva",
+    uprightMeaning: "Dominio de las emociones: sereno ante las tormentas, consejero compasivo, mediador justo y protector generoso de su entorno.",
+    reversedMeaning: "Frialdad calculada, manipulación psicológica, vicios ocultos para tapar la angustia o desconexión emocional fingida.",
+    question: "¿Soy capaz de mantener la calma y el corazón compasivo cuando todo a mi alrededor se agita?",
+    advice: "Sé el puerto seguro para ti y para los tuyos: la verdadera fuerza no grita, acoge y comprende.",
+    keywordsUpright: ["Madurez emocional", "Consejero sabio", "Calma en la tormenta", "Compasión firme", "Templanza"],
+    keywordsReversed: ["Frialdad manipuladora", "Inestabilidad encubierta", "Vicios de escape", "Cinismo emocional"]
+  },
+
+  // ESPADAS (Aire)
+  "as-de-espadas": {
+    visualObservation: "Una mano firme surge de una nube empuñando una espada de doble filo vertical coronada por una corona de oro adornada con ramas de palma y olivo, sobre un paisaje montañoso agreste.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? La espada corta el aire hacia el cielo con poder tajante; la corona sobre su punta indica que la verdad y la justicia intelectual siempre triunfan.",
+    formula: "Espadas (Aire/Intelecto) + 1 (Inicio/Semilla) = Claridad mental fulminante, una idea brillante, revelación de la verdad y corte con el engaño",
+    uprightMeaning: "Momento de lucidez total: descubres la verdad, tomas una decisión tajante sin temblores o nace una idea genial que despeja toda duda.",
+    reversedMeaning: "Confusión mental, palabras hirientes dichas con crueldad, ideas caóticas o usar la verdad como un cuchillo para hacer daño.",
+    question: "¿Qué decisión tajante necesito tomar para disipar la niebla de mis pensamientos?",
+    advice: "Di la verdad con serenidad y corta por lo sano con lo que ya no tiene sentido sostener.",
+    keywordsUpright: ["Claridad mental", "Verdad tajante", "Idea brillante", "Decisión lúcida", "Corte liberador"],
+    keywordsReversed: ["Crueldad verbal", "Confusión", "Uso dañino del intelecto", "Obstinación errada"]
+  },
+  "2-de-espadas": {
+    visualObservation: "Una mujer vestida de blanco con una venda en los ojos se sienta de noche frente a un mar picado con escollos, sosteniendo dos grandes espadas cruzadas sobre su pecho.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Bloquea su visión y su corazón con dos espadas afiladas; no quiere mirar los hechos ni escuchar a ninguna de las partes para evitar decidir.",
+    formula: "Espadas (Aire/Mente) + 2 (Elección/Duda paralizante) = Indecisión forzada, tregua tensa, negarse a ver la realidad por miedo a tomar postura",
+    uprightMeaning: "Encrucijada mental: estás en un callejón sin salida porque te niegas a mirar la verdad de frente. Quítate la venda; postergar la decisión solo prolonga la tensión.",
+    reversedMeaning: "Quitarte la venda de los ojos, afrontar la cruda realidad y dar el paso necesario para romper el punto muerto.",
+    question: "¿Qué realidad evidente me niego a reconocer por miedo a lo que tendré que hacer después?",
+    advice: "La venda solo te protege de una incomodidad momentánea: atrévete a mirar y elige tu camino.",
+    keywordsUpright: ["Indecisión", "Venda en los ojos", "Tregua tensa", "Bloqueo mental", "Encrucijada"],
+    keywordsReversed: ["Quitarse la venda", "Romper el bloqueo", "Afrontar la verdad", "Decisión inevitable"]
+  },
+  "3-de-espadas": {
+    visualObservation: "Un gran corazón rojo suspendido en un cielo gris de tormenta y lluvia es atravesado de parte a parte por tres espadas afiladas que convergen en su centro.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Las espadas clavan el corazón en medio del aguacero; una escena sobria y directa que simboliza el dolor punzante de una verdad hiriente.",
+    formula: "Espadas (Aire/Palabras y verdades) + 3 (Expansión/Impacto) = Dolor por una desilusión, traición, ruptura o verdad dolorosa que rompe ilusiones",
+    uprightMeaning: "Duelo mental, dolor por una verdad cruda, ruptura amorosa, traición de palabras o decepción amarga. El corazón sangra, pero la herida limpia la mentira.",
+    reversedMeaning: "Comienzo de la recuperación tras un desengaño, cicatrización de viejas heridas o rencor enquistado que no permite sanar.",
+    question: "¿Qué verdad dolorosa debo aceptar con madurez para que mi corazón empiece a sanar?",
+    advice: "No tapes el dolor con cinismo: permítete llorar para que la lluvia lave la herida y puedas recomponerte.",
+    keywordsUpright: ["Dolor por desengaño", "Verdad que hiere", "Ruptura dolorosa", "Traición", "Tormenta mental"],
+    keywordsReversed: ["Alivio del sufrimiento", "Cicatrización", "Perdón liberador", "Rencor estéril"]
+  },
+  "4-de-espadas": {
+    visualObservation: "La figura esculpida de un caballero reposa en posición de oración sobre una tumba dentro de una capilla con una vidriera de colores; tres espadas cuelgan sobre él y una yace a su lado.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Yace inmóvil en absoluto silencio y recogimiento; ha dejado las armas y se toma un descanso obligatorio para sanar mente y cuerpo.",
+    formula: "Espadas (Aire/Mente) + 4 (Estabilidad/Pausa obligada) = Retiro de la batalla, reposo mental, convalecencia y recuperación de energía",
+    uprightMeaning: "Tregua sagrada: tu mente necesita un respiro urgente. Apaga las pantallas, sal de las discusiones y descansa antes de que el estrés te pase factura física.",
+    reversedMeaning: "Regreso a la actividad tras una larga pausa, o agotamiento crónico por negarte a descansar cuando tu cuerpo te lo exige.",
+    question: "¿En qué área de mi vida necesito declarar una tregua y dejar de discutir?",
+    advice: "El descanso no es pereza, es mantenimiento indispensable para la mente guerrera.",
+    keywordsUpright: ["Reposo mental", "Tregua sagrada", "Convalecencia", "Meditación", "Silencio sanador"],
+    keywordsReversed: ["Fin del descanso", "Vuelta a la acción", "Insomnio por estrés", "Agotamiento"]
+  },
+  "5-de-espadas": {
+    visualObservation: "Un hombre sonríe con arrogancia sosteniendo tres espadas mientras mira con desprecio a dos figuras cabizbajas que se alejan derrotadas llorando por la playa.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Ha ganado la discusión y se queda con las espadas de los demás, pero sus rivales se marchan humillados; se queda solo en un terreno desolado.",
+    formula: "Espadas (Aire/Discusiones) + 5 (Crisis/Conflicto egoico) = Victoria pírrica, ganar una discusión perdiendo la relación, soberbia y mezquindad",
+    uprightMeaning: "Advertencia contra la soberbia y la necesidad tóxica de 'tener la razón a toda costa'. Puedes ganar el debate pero destruir la confianza y el afecto de quienes te rodean.",
+    reversedMeaning: "Deseo de hacer las paces tras una discusión amarga, admitir un error o negarse a seguir participando en juegos mezquinos.",
+    question: "¿Prefiero tener la razón a toda costa o prefiero preservar la paz y el vínculo con el otro?",
+    advice: "Elige tus batallas con sabiduría: a veces ceder con elegancia es la victoria más grande.",
+    keywordsUpright: ["Victoria pírrica", "Soberbia intelectual", "Humillación ajena", "Conflicto mezquino"],
+    keywordsReversed: ["Reconciliación humilde", "Fin de la hostilidad", "Aprender a perder", "Disculpa sincera"]
+  },
+  "6-de-espadas": {
+    visualObservation: "Un barquero rema suavemente guiando una barca donde van sentadas una mujer cubierta y un niño hacia una orilla lejana y pacífica; seis espadas van clavadas en la proa sin hundir la barca.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se alejan de aguas agitadas (a la derecha) navegando hacia aguas serenas y lisas (a la izquierda), llevando las cicatrices del viaje pero a salvo.",
+    formula: "Espadas (Aire/Pensamientos) + 6 (Alivio/Transición hacia la calma) = Viaje de recuperación, dejar atrás el drama, mudanza mental hacia la paz",
+    uprightMeaning: "Transición hacia tiempos más tranquilos. Dejas atrás una etapa de tormentas mentales o conflictos; el camino es pausado pero te lleva a buen puerto.",
+    reversedMeaning: "Dificultad para dejar atrás el pasado, problemas en viajes o traslados, o llevarte contigo los mismos fantasmas mentales al nuevo lugar.",
+    question: "¿Estoy permitiendo que la marea me lleve a la tranquilidad o sigo aferrado al drama que dejé atrás?",
+    advice: "Confía en el barquero: las aguas turbulentas van quedando atrás y pronto tocarás tierra serena.",
+    keywordsUpright: ["Transición serena", "Dejar el conflicto", "Viaje curativo", "Aguas calmas", "Alivio mental"],
+    keywordsReversed: ["Viaje accidentado", "Cargar con el pasado", "Resistencia a la calma", "Estancamiento"]
+  },
+  "7-de-espadas": {
+    visualObservation: "Un hombre se aleja de puntillas sonriendo con picardía de un campamento militar, cargando cinco espadas en sus brazos mientras deja dos espadas clavadas en el suelo a sus espaldas.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se escabulle sigilosamente llevándose el arsenal del enemigo sin luchar abiertamente, actuando con astucia o a espaldas de los demás.",
+    formula: "Espadas (Aire/Estrategias) + 7 (Prueba/Evaluación de astucia) = Actuar con sigilo, estrategia indirecta, secretos o advertencia contra el autoengaño",
+    uprightMeaning: "Necesidad de diplomacia, prudencia y no mostrar todas tus cartas. Pero cuidado: también advierte sobre mentiras, evasión de responsabilidades o trampas ajenas.",
+    reversedMeaning: "Confesión de la verdad, secretos descubiertos, dejar de actuar a escondidas o reconocer que no puedes engañarte más.",
+    question: "¿Estoy usando la astucia para protegerme con inteligencia o estoy escapando cobardemente de la verdad?",
+    advice: "Sé prudente con tus planes, pero no cruces la línea de la deshonestidad: lo que se oculta tarde o temprano se sabrá.",
+    keywordsUpright: ["Estrategia sigilosa", "Astucia", "Secretos necesarios", "Prudencia táctica", "Alerta de engaño"],
+    keywordsReversed: ["Verdad destapada", "Confesión honesta", "Trampa desarticulada", "Cara a cara"]
+  },
+  "8-de-espadas": {
+    visualObservation: "Una mujer con los ojos vendados y el cuerpo atado con cuerdas flojas permanece de pie en medio de un lodazal, rodeada por ocho espadas clavadas en la tierra que forman una jaula a su alrededor.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se siente completamente prisionera y desamparada; sin embargo, no hay guardias, sus pies están libres y las cuerdas son tan flojas que podría zafarse con solo dar un paso.",
+    formula: "Espadas (Aire/Pensamientos) + 8 (Esfuerzo/Prisión mental) = Sentirse atrapado por las propias creencias limitantes, parálisis por miedo infundado",
+    uprightMeaning: "Te sientes atrapado en una jaula de pensamientos y excusas. La cárcel está en tu mente: nadie te retiene excepto tu propia creencia de que no tienes escapatoria.",
+    reversedMeaning: "Liberación de la jaula mental, quitarte la venda de las dudas y dar el primer paso valiente hacia la autonomía.",
+    question: "¿Qué creencia negativa sobre mí mismo me está haciendo sentir prisionero cuando en realidad la puerta está abierta?",
+    advice: "Da un paso adelante: las espadas que te rodean no pueden tocarte a menos que tú decidas chocar contra ellas.",
+    keywordsUpright: ["Prisión mental", "Victimismo aprendido", "Parálisis por miedo", "Creencias limitantes"],
+    keywordsReversed: ["Liberación", "Abrir los ojos", "Romper ataduras", "Empoderamiento y salida"]
+  },
+  "9-de-espadas": {
+    visualObservation: "Una persona sentada en su cama en plena oscuridad de la noche se cubre el rostro con las manos en un gesto de angustia inconsolable, mientras nueve espadas afiladas cuelgan horizontalmente sobre la pared.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se ha despertado en medio de una pesadilla o un ataque de pánico; las espadas están colgadas en la pared, no clavadas en su cuerpo, pero su tormento interior es real.",
+    formula: "Espadas (Aire/Pensamientos) + 9 (Cosecha/Soledad angustiosa) = Insomnio, ansiedad severa, culpa nocturna y magnificación de los problemas",
+    uprightMeaning: "Noche oscura de la mente: la ansiedad y el miedo te quitan el sueño. Recuerda que los monstruos que tu cabeza fabrica a las tres de la mañana casi nunca existen bajo la luz del día.",
+    reversedMeaning: "El fin de la pesadilla, pedir ayuda psicológica o afectiva, amanecer y comprobar que la situación no era tan grave como tu mente temía.",
+    question: "¿De qué tamaño real es este problema cuando lo miro a la luz del día y lo comparto con alguien de confianza?",
+    advice: "Enciende la luz y sal de la cama: no pelees con tus sombras a solas, la mente asustada siempre exagera.",
+    keywordsUpright: ["Ansiedad nocturna", "Insomnio", "Culpa lacerante", "Miedo exagerado", "Pesadilla mental"],
+    keywordsReversed: ["Fin de la angustia", "Amanecer liberador", "Buscar apoyo", "Desmitificar el miedo"]
+  },
+  "10-de-espadas": {
+    visualObservation: "Un hombre yace boca abajo en la orilla del mar cubierto con un manto rojo, con diez espadas clavadas a lo largo de toda su columna vertebral; el cielo es negro plomizo, pero en el horizonte empieza a clarear una franja dorada de amanecer.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Ha tocado fondo total. No puede haber peor caída; sin embargo, el mar está en calma y el sol ya asoma por el fondo disipando la noche.",
+    formula: "Espadas (Aire/Mente) + 10 (Fin de ciclo/Límite absoluto) = Tocar fondo, final definitivo de una etapa tortuosa, alivio paradójico porque ya nada puede empeorar",
+    uprightMeaning: "El final absoluto de una situación agotadora. Sí, ha sido duro y te sientes derrotado, pero la buena noticia es que lo peor ya pasó: ahora solo queda levantarse y renacer.",
+    reversedMeaning: "Negarte a aceptar que se terminó, prolongar el sufrimiento fingiendo que hay arreglo o recuperación gradual tras una caída dolorosa.",
+    question: "¿Estoy dispuesto a aceptar que esta batalla terminó para poder empezar a sanar?",
+    advice: "Déjalo ir: has sobrevivido a lo peor y a partir de este minuto todo comienza a mejorar hacia el amanecer.",
+    keywordsUpright: ["Tocar fondo", "Fin definitivo", "Alivio tras la caída", "Amanecer en el horizonte", "Cierre tajante"],
+    keywordsReversed: ["Recuperación lenta", "Resurrección", "Miedo a soltar el drama", "Cicatrices del pasado"]
+  },
+  "sota-de-espadas": {
+    visualObservation: "Un joven alerta con espada alzada mira por encima de su hombro mientras camina sobre un terreno escarpado con nubes agitadas y bandadas de pájaros en el viento.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Se mueve con agilidad vigilante; sus ojos están muy abiertos captando información, noticias y detalles que a otros se les escapan.",
+    formula: "Espadas (Aire) + Sota (Aprendiz/Mensajero) = Mente despierta, curiosidad intelectual, vigilancia, recopilar información y mensajes clarificadores",
+    uprightMeaning: "Ganas de aprender, mente rápida como un rayo, espíritu crítico y noticias esclarecedoras. Capacidad para ver la verdad detrás de las apariencias.",
+    reversedMeaning: "Chismes maliciosos, espionaje en redes sociales, comentarios hirientes por inmadurez o paranoia de sentirse vigilado.",
+    question: "¿Estoy usando mi agudeza mental para aprender o para juzgar y criticar a los demás?",
+    advice: "Mantén tus ojos y oídos abiertos: la información objetiva será tu mejor aliada para tomar decisiones.",
+    keywordsUpright: ["Mente ágil", "Curiosidad analítica", "Noticias reveladoras", "Vigilancia", "Espíritu crítico"],
+    keywordsReversed: ["Chismes hirientes", "Espionaje mezquino", "Crítica destructiva", "Paranoia"]
+  },
+  "caballo-de-espadas": {
+    visualObservation: "Un caballero de armadura completa con la espada desenvainada galopa a toda velocidad contra el viento sobre su caballo desbocado en medio de nubes en tempestad.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Carga con furia hacia adelante sin mirar los obstáculos, guiado puramente por su convicción mental y su determinación implacable.",
+    formula: "Espadas (Aire) + Caballo (Movimiento veloz/Conquistador) = Determinación tajante, avance fulminante de una idea, ir directo al grano sin filtro",
+    uprightMeaning: "Acción intelectual implacable: defiendes tus posturas con elocuencia fulminante, tomas decisiones rápidas y no te detienes ante nadie.",
+    reversedMeaning: "Agresividad verbal despiadada, precipitación ciega, fanatismo ideológico o herir los sentimientos ajenos por falta de empatía.",
+    question: "¿Estoy usando la verdad para construir soluciones o como un arma arrojadiza para destruir a mi oponente?",
+    advice: "Asegúrate de que la velocidad de tus argumentos no atropelle la compasión ni el sentido común.",
+    keywordsUpright: ["Determinación tajante", "Elocuencia implacable", "Ir al grano", "Claridad veloz", "Valentía mental"],
+    keywordsReversed: ["Agresividad verbal", "Precipitación ciega", "Fanatismo", "Crueldad sin filtro"]
+  },
+  "reina-de-espadas": {
+    visualObservation: "Una reina de perfil severo y digno se sienta en un trono coronado con mariposas y querubines, alzando una espada vertical en la mano derecha mientras extiende su mano izquierda con gesto ecuánime en un cielo despejado.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Mira de frente con mirada incorruptible; no tolera mentiras ni rodeos, pero su juicio es lúcido, justo y sereno.",
+    formula: "Espadas (Aire) + Reina (Maestra Interior/Madurez del Pensamiento) = Lucidez ética, pensamiento independiente, discernimiento honesto y corte con el drama",
+    uprightMeaning: "Inteligencia brillante, honestidad radical, capacidad para cortar con relaciones tóxicas o ilusiones falsas. Te pide ser justa, objetiva y poner límites claros.",
+    reversedMeaning: "Amargura, frialdad emocional vengativa, cinismo hiriente o cerrarse al afecto por miedo a volver a ser herida.",
+    question: "¿Qué límite claro y tajante necesito poner hoy sin sentir culpa por hacerlo?",
+    advice: "Sé clara como el cristal: quien merece tu compañía respetará tu honestidad sin pedirte que te disfraces.",
+    keywordsUpright: ["Lucidez implacable", "Límites claros", "Honestidad radical", "Independencia mental", "Objetividad"],
+    keywordsReversed: ["Amargura fría", "Cinismo destructor", "Aislamiento defensivo", "Falta de piedad"]
+  },
+  "rey-de-espadas": {
+    visualObservation: "Un rey severo con túnica azul y manto púrpura se sienta en un trono alto de piedra mirando de frente con la espada desenvainada en la mano derecha, sobre un fondo de cielo despejado con dos pájaros.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Juzga con calma implacable; representa la ley, la justicia racional, el rigor analítico y la autoridad basada en la verdad demostrable.",
+    formula: "Espadas (Aire) + Rey (Líder/Autoridad de la Mente) = Autoridad intelectual, juicio imparcial, asesoramiento legal o estratégico y liderazgo ético",
+    uprightMeaning: "Consejero brillante, juez ecuánime, estratega impecable. Es momento de dejar las emociones a un lado y tomar decisiones basadas estrictamente en la lógica y la ética.",
+    reversedMeaning: "Tiranía intelectual, abuso del poder legal o verbal, manipulación calculadora o crueldad deshumanizada.",
+    question: "¿Qué decisión debo tomar basándome estrictamente en los hechos objetivos y no en mis miedos o deseos?",
+    advice: "Actúa con justicia impecable: la verdad no necesita adornos para imponer su peso.",
+    keywordsUpright: ["Juicio ecuánime", "Autoridad intelectual", "Estrategia lúcida", "Rigor ético", "Claridad legal"],
+    keywordsReversed: ["Crueldad intelectual", "Manipulación de leyes", "Frialdad calculadora", "Abuso de poder"]
+  },
+
+  // OROS (Tierra)
+  "as-de-oros": {
+    visualObservation: "Una mano divina surge de una nube sosteniendo una gran moneda de oro macizo grabada con un pentáculo, sobre un jardín florido con lirios blancos y un arco de rosas que da paso a una montaña.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Una mano celestial ofrece una moneda tangible en medio de un jardín fértil; es una oportunidad económica o de salud que ya está materializada esperando ser tomada.",
+    formula: "Oros (Tierra/Materia) + 1 (Inicio/Semilla) = La semilla de la prosperidad material, nueva oferta laboral, salud o cimiento financiero tangible",
+    uprightMeaning: "Oportunidad de oro: nuevo trabajo, ingreso económico inesperado, regalo material, inicio de un hábito de salud o compra importante. Es una base sólida.",
+    reversedMeaning: "Mala inversión, oportunidad desperdiciada por desidia, gastos imprevistos o avaricia que impide compartir.",
+    question: "¿Qué oportunidad tangible para mejorar mi estabilidad económica o de salud tengo hoy ante mis ojos?",
+    advice: "Acepta la bendición terrenal y plántala en tierra fértil: la prosperidad bien administrada da sombra a muchos.",
+    keywordsUpright: ["Prosperidad tangible", "Oportunidad laboral", "Cimiento material", "Buena salud", "Regalo económico"],
+    keywordsReversed: ["Oportunidad perdida", "Gasto imprevisto", "Inseguridad financiera", "Avaricia"]
+  },
+  "2-de-oros": {
+    visualObservation: "Un joven con sombrero alto de juglar hace malabares con dos grandes monedas de oro envueltas en una cinta verde con forma de infinito, mientras dos barcos navegan sobre olas gigantes al fondo.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Danza manteniendo el equilibrio dinámico entre dos monedas; no se estresa por el vaivén del mar, baila con el cambio con agilidad flexible.",
+    formula: "Oros (Tierra/Recursos) + 2 (Elección/Equilibrio dinámico) = Adaptabilidad financiera, compaginar dos trabajos o prioridades, hacer malabares con el tiempo",
+    uprightMeaning: "Flexibilidad ante los cambios: compaginar dos proyectos, administrar ingresos y gastos con cintura o adaptarse a un ritmo de vida dinámico sin perder la sonrisa.",
+    reversedMeaning: "Caída de las bolas del malabarista: descontrol financiero, exceso de deudas, sobrecarga de trabajo y estrés por no dar abasto.",
+    question: "¿Cómo puedo organizar mis horarios y mis gastos para disfrutar de la flexibilidad sin caer en el caos?",
+    advice: "Fluye con el vaivén de las mareas: la estabilidad no es rigidez, es la capacidad de bailar con el cambio.",
+    keywordsUpright: ["Equilibrio flexible", "Adaptabilidad", "Compaginar tareas", "Manejo hábil del dinero", "Juego ágil"],
+    keywordsReversed: ["Descontrol de gastos", "Estrés por deudas", "Colapso por abarcar", "Desorganización"]
+  },
+  "3-de-oros": {
+    visualObservation: "Un joven cantero o artesano con mandil trabaja con cincel en el arco de una iglesia gótica, mientras un monje y un arquitecto con planos discuten y valoran su labor con respeto.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Trabaja en su obra escuchando atentamente a los otros dos profesionales; es un equipo de expertos cooperando para construir algo grandioso.",
+    formula: "Oros (Tierra/Materia) + 3 (Expansión/Fruto del esfuerzo) = Trabajo en equipo calificado, reconocimiento a la maestría artesanal, colaboración profesional",
+    uprightMeaning: "Trabajo en equipo armonioso, aprecio por tu destreza técnica, aprendizaje profesional y construcción de proyectos sólidos gracias a la cooperación.",
+    reversedMeaning: "Falta de coordinación en el equipo, chapuzas por pereza, choque de opiniones profesionales o falta de motivación laboral.",
+    question: "¿Con quiénes puedo sumar talentos complementarios para que nuestra obra común sea duradera?",
+    advice: "Aporta tu talento con humildad y escucha a los demás expertos: las grandes catedrales nunca las construye una sola persona.",
+    keywordsUpright: ["Trabajo en equipo", "Maestría técnica", "Reconocimiento profesional", "Colaboración sabia"],
+    keywordsReversed: ["Falta de coordinación", "Trabajo mediocre", "Conflictos de equipo", "Desinterés laboral"]
+  },
+  "4-de-oros": {
+    visualObservation: "Un hombre coronado se sienta rígidamente en un pedestal de piedra sujetando con fuerza una moneda entre sus manos, pisando dos monedas con sus pies y llevando una cuarta moneda sobre su cabeza, dando la espalda a una ciudad próspera.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Abraza sus monedas con pánico a perderlas; está tan petrificado protegiendo su dinero que no puede moverse ni relacionarse con nadie.",
+    formula: "Oros (Tierra/Recursos) + 4 (Estabilidad/Pausa tacaña) = Apego al dinero, miedo a la escasez, necesidad de control material y tacañería emocional",
+    uprightMeaning: "Seguridad económica alcanzada, pero alerta contra la avaricia, la tacañería afectiva o el miedo irracional a la ruina que te impide disfrutar lo que tienes.",
+    reversedMeaning: "Aprender a soltar y compartir, generosidad liberadora; o pérdida de dinero por gastos descontrolados al intentar compensar.",
+    question: "¿Qué estoy reteniendo con miedo (dinero, afecto, control) que en realidad me está asfixiando a mí?",
+    advice: "El dinero y el amor son energía que debe circular: quien cierra el puño no solo no deja salir, tampoco puede recibir.",
+    keywordsUpright: ["Seguridad económica", "Apego material", "Miedo a la escasez", "Control rígido", "Tacañería"],
+    keywordsReversed: ["Generosidad", "Aprender a soltar", "Gastos desmedidos", "Alivio del miedo"]
+  },
+  "5-de-oros": {
+    visualObservation: "Dos mendigos descalzos con ropas andrajosas caminan penosamente sobre la nieve en una noche helada; uno de ellos va en muletas con una campanilla, pasando de largo junto a la ventana iluminada de una iglesia con un rosetón de cinco oros.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Pasan frío y hambre en medio de la tormenta, pero están tan ensimismados en su desdicha que no ven la puerta cálida del templo a pocos pasos de ellos.",
+    formula: "Oros (Tierra/Cuerpo y dinero) + 5 (Crisis/Carencia) = Dificultades económicas, sensación de desamparo, enfermedad o soledad temporal",
+    uprightMeaning: "Crisis económica, gastos que aprietan, problema de salud o sensación de exclusión y frío emocional. Recuerda: la ayuda y el refugio están mucho más cerca de lo que crees; solo debes tocar la puerta.",
+    reversedMeaning: "Fin de la racha de estrechez, encontrar trabajo, recuperación de la salud y acogida afectiva.",
+    question: "¿Qué ayuda o recurso disponible estoy pasando por alto por orgullo o vergüenza de pedir?",
+    advice: "Trágate el orgullo y pide auxilio: el templo siempre tiene las puertas abiertas para quien necesita calor.",
+    keywordsUpright: ["Crisis económica", "Sensación de carencia", "Frío emocional", "Enfermedad transitoria", "Exclusión"],
+    keywordsReversed: ["Recuperación económica", "Refugio encontrado", "Superación de la crisis", "Sanación"]
+  },
+  "6-de-oros": {
+    visualObservation: "Un comerciante próspero con túnica morada sostiene una balanza equilibrada en la mano izquierda mientras reparte monedas con la derecha a dos necesitados arrodillados a sus pies.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Distribuye su riqueza con justicia y generosidad metódica; no regala a ciegas, sopesa con la balanza para dar a cada uno según su necesidad real.",
+    formula: "Oros (Tierra/Dinero) + 6 (Alivio/Intercambio justo) = Generosidad compartida, préstamos justos, recibir ayuda cuando la necesitas o retribuir con gratitud",
+    uprightMeaning: "Flujo equilibrado de abundancia: recibir un aumento, un crédito favorable, una beca o estar en posición de ayudar económicamente a alguien con corazón noble.",
+    reversedMeaning: "Caridad con condiciones humillantes, deudas impagables, favoritismo injusto o tacañería disfrazada de ayuda.",
+    question: "¿Doy con generosidad limpia sin esperar pleitesías a cambio, y sé recibir sin sentirme inferior?",
+    advice: "Mantén la balanza en equilibrio: la verdadera riqueza consiste en hacer florecer a quienes te rodean.",
+    keywordsUpright: ["Generosidad justa", "Intercambio equilibrado", "Ayuda mutua", "Donación sabia", "Prosperidad compartida"],
+    keywordsReversed: ["Deudas abusivas", "Caridad humillante", "Egoísmo paternalista", "Desigualdad"]
+  },
+  "7-de-oros": {
+    visualObservation: "Un campesino con botas de trabajo se apoya pensativo en su azadón, contemplando con paciencia un frondoso arbusto del que brotan siete grandes monedas de oro florecidas.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Ha trabajado duro la tierra; ahora se detiene a descansar y evaluar con calma si la cosecha está lista o si necesita esperar un poco más.",
+    formula: "Oros (Tierra/Materia) + 7 (Prueba/Evaluación de la siembra) = Paciencia en la cosecha, evaluar los resultados de una inversión a largo plazo, constancia",
+    uprightMeaning: "Los frutos de tu trabajo están creciendo bien. No tengas prisa por arrancar las frutas verdes: ten paciencia y confía en los tiempos naturales de maduración.",
+    reversedMeaning: "Impaciencia que echa a perder un proyecto, pereza de última hora o desencanto por comprobar que el esfuerzo no valió la pena.",
+    question: "¿Sé esperar con serenidad a que mis proyectos maduren sin desesperarme por resultados inmediatos?",
+    advice: "El trabajo duro ya está hecho: deja que la tierra haga su magia y no fuerces la cosecha.",
+    keywordsUpright: ["Paciencia sabia", "Inversión a largo plazo", "Evaluación de la cosecha", "Maduración natural"],
+    keywordsReversed: ["Impaciencia destructiva", "Pereza final", "Mala inversión", "Descontento"]
+  },
+  "8-de-oros": {
+    visualObservation: "Un artesano concentrado en su taller esculpe con martillo y cincel moneda por moneda en su banqueta de madera, mientras cuelga orgulloso las monedas terminadas en un poste a la vista.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Trabaja con total dedicación y esmero en cada pieza individual, perfeccionando su técnica artesanal día tras día sin distracciones.",
+    formula: "Oros (Tierra/Trabajo) + 8 (Esfuerzo/Movimiento constante) = Dedicación meticulosa, perfeccionar un oficio, disciplina de estudio y maestría diaria",
+    uprightMeaning: "Esmero y disciplina: estás aprendiendo o perfeccionando una habilidad valiosa. Tu concentración y atención al detalle te convertirán en un maestro en tu campo.",
+    reversedMeaning: "Rutina aburrida, perfeccionismo paralizante, chapuzas por querer terminar rápido o falta de dedicación en los estudios.",
+    question: "¿Qué oficio, arte o conocimiento merece mi dedicación meticulosa y apasionada?",
+    advice: "Pon el corazón en cada detalle: la repetición constante y amorosa es el único secreto de la maestría.",
+    keywordsUpright: ["Maestría artesanal", "Disciplina diaria", "Perfeccionamiento", "Dedicación al trabajo", "Aprendizaje serio"],
+    keywordsReversed: ["Chapuza", "Aburrimiento rutinario", "Perfeccionismo dañino", "Desidia laboral"]
+  },
+  "9-de-oros": {
+    visualObservation: "Una dama elegante con una túnica de seda adornada con flores pasea plácidamente por un viñedo colmado de uvas maduras y nueve monedas de oro; en su mano enguantada reposa con tranquilidad un halcón encapuchado.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Disfruta en soledad de su hermosa finca privada con total independencia y elegancia; su halcón simboliza el dominio sabio de sus instintos.",
+    formula: "Oros (Tierra/Materia) + 9 (Cosecha/Independencia plena) = Independencia financiera, disfrute del propio mérito, refinamiento y seguridad personal",
+    uprightMeaning: "Autosuficiencia y elegancia: has trabajado duro y hoy disfrutas de tu independencia, solvencia económica y bienestar personal sin depender de nadie.",
+    reversedMeaning: "Inseguridad financiera oculta tras apariencias de lujo, aislamiento por desconfianza o haber sacrificado la vida afectiva por dinero.",
+    question: "¿Reconozco y celebro mi capacidad de sostenerme a mí mismo con dignidad y solvencia?",
+    advice: "Disfruta de tu propio jardín: te has ganado cada racimo de uvas y cada momento de descanso.",
+    keywordsUpright: ["Independencia económica", "Autonomía personal", "Disfrute solitario", "Elegancia y mérito", "Abundancia lograda"],
+    keywordsReversed: ["Aparente riqueza", "Soledad amarga", "Derroche imprudente", "Dependencia oculta"]
+  },
+  "10-de-oros": {
+    visualObservation: "Una familia de tres generaciones (abuelo canoso con manto bordado, pareja conversando y un niño jugando con dos perros leales) convive bajo el arco de piedra de una gran mansión solariega con diez monedas ordenadas como el Árbol de la Vida.",
+    whatEyesSee: "¿Qué está haciendo la familia? Comparten la vida en paz y seguridad en su hogar solariego; el anciano contempla satisfecho el legado duradero que ha construido para sus herederos.",
+    formula: "Oros (Tierra/Recursos) + 10 (Fin de ciclo/Legado absoluto) = Riqueza generacional, legado familiar sólido, seguridad patrimonial y raíces profundas",
+    uprightMeaning: "La cumbre de la seguridad material: herencia favorable, estabilidad patrimonial, raíces familiares sólidas y sensación de que tus esfuerzos trascenderán en el tiempo.",
+    reversedMeaning: "Peleas por herencias, disputas familiares por dinero, ruina de un negocio familiar o pérdida de tradiciones valiosas.",
+    question: "¿Qué legado duradero (material, ético o afectivo) estoy construyendo para quienes vendrán después?",
+    advice: "Honra tus raíces y construye a largo plazo: la verdadera prosperidad es la que cobija a las generaciones futuras.",
+    keywordsUpright: ["Legado duradero", "Herencia próspera", "Seguridad familiar", "Patrimonio consolidado", "Raíces sólidas"],
+    keywordsReversed: ["Peleas por dinero", "Pérdida patrimonial", "Ruptura de lazos familiares", "Tradición asfixiante"]
+  },
+  "sota-de-oros": {
+    visualObservation: "Un joven vestido con túnica verde y gorro rojo sostiene con ambas manos y reverencia una moneda de oro flotante en medio de un campo fértil recién arado con montañas de fondo.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Mira fijamente la moneda con fascinación y respeto estudioso; no la gasta ni la presume, la examina como una semilla preciosa para aprender su valor.",
+    formula: "Oros (Tierra) + Sota (Aprendiz/Mensajero terrenal) = Ganas de formarse en lo práctico, noticias de empleo, ahorro concienzudo y dedicación seria",
+    uprightMeaning: "Estudiante aplicado, nueva propuesta de trabajo o beca, ganas de cuidar el cuerpo o ahorrar. Enfoque metódico y ganas de aprender cosas prácticas y útiles.",
+    reversedMeaning: "Pereza en los estudios, falta de disciplina económica, promesas de trabajo que no se concretan o frustración laboral.",
+    question: "¿Qué habilidad práctica o económica necesito empezar a estudiar con paciencia y humildad?",
+    advice: "Valora cada centavo y cada minuto de estudio: las grandes fortunas nacen de la paciencia del buen aprendiz.",
+    keywordsUpright: ["Estudiante aplicado", "Noticia de trabajo", "Ahorro prudente", "Paso a paso firme", "Enfoque práctico"],
+    keywordsReversed: ["Pereza académica", "Derroche irresponsable", "Falta de disciplina", "Desánimo práctico"]
+  },
+  "caballo-de-oros": {
+    visualObservation: "Un caballero robusto con armadura oscura monta un gran caballo de tiro negro y pesado que permanece firme de pie sobre un campo labrado; el jinete sostiene una moneda con mirada atenta y calmada.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? No corre ni salta; está firmemente plantado en la tierra fértil, avanzando con paso lento, constante e implacable hacia su objetivo.",
+    formula: "Oros (Tierra) + Caballo (Movimiento constante/Constructor) = Paso firme, trabajo incansable, paciencia absoluta, lealtad y compromiso cumplido",
+    uprightMeaning: "La constancia en persona: avanza sin prisa pero sin pausa. Responsabilidad intachable, cumplimiento de plazos y lealtad a prueba de bombas. El éxito llegará por pura perseverancia.",
+    reversedMeaning: "Monotonía asfixiante, terquedad absoluta, lentitud exasperante o agotamiento por no saber descansar del trabajo duro.",
+    question: "¿Estoy avanzando con constancia paciente o me estoy desesperando por no ver resultados inmediatos?",
+    advice: "Sigue labrando surco a surco: el caballo de tiro siempre llega a la meta, sin importar cuán pesado sea el carro.",
+    keywordsUpright: ["Constancia implacable", "Responsabilidad seria", "Paso seguro", "Lealtad laboral", "Paciencia tenaz"],
+    keywordsReversed: ["Terquedad ciega", "Lentitud exasperante", "Aburrimiento rutinario", "Inflexibilidad"]
+  },
+  "reina-de-oros": {
+    visualObservation: "Una reina coronada se sienta en un trono tallado con frutos y cabezas de cabra en medio de un vergel floreciente, sosteniendo una gran moneda en su regazo con mirada amorosa; un conejo blanco salta a su derecha.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Acaricia y contempla la moneda con ternura maternal, rodeada de abundancia natural; representa a quien sabe hacer que todo crezca con amor y sentido común.",
+    formula: "Oros (Tierra) + Reina (Maestra Interior/Madurez Práctica y Nutricia) = Sabiduría práctica, prosperidad hogareña, cuidado del cuerpo y generosidad terrenal",
+    uprightMeaning: "La anfitriona perfecta: sentido común admirable, prosperidad administrada con cariño, cuidado del bienestar físico y capacidad de crear un hogar acogedor y seguro.",
+    reversedMeaning: "Obsesión por lo material, descuido de la salud física, tacañería o asfixia a los seres queridos controlando sus gastos.",
+    question: "¿Cómo puedo cuidar mejor mi cuerpo, mi hogar y mis finanzas con un enfoque amoroso y práctico?",
+    advice: "Combina el sentido común con el cariño: cuando cuidas la tierra con ternura, la tierra nunca te deja con hambre.",
+    keywordsUpright: ["Sabiduría práctica", "Hogar próspero", "Sentido común", "Cuidado del cuerpo", "Abundancia nutricia"],
+    keywordsReversed: ["Materialismo asfixiante", "Descuido físico", "Inseguridad de sustento", "Avaricia hogareña"]
+  },
+  "rey-de-oros": {
+    visualObservation: "Un rey opulento con manto decorado con racimos de uvas maduras se sienta en un trono labrado con toros sagrados, con una mano apoyada sobre una moneda dorada y la otra sosteniendo un cetro, rodeado de castillos y jardines florecientes.",
+    whatEyesSee: "¿Qué está haciendo el dibujo? Reposa seguro y complacido en medio de su imperio material; ha dominado las leyes del mundo tangible y goza de prosperidad duradera.",
+    formula: "Oros (Tierra) + Rey (Líder/Autoridad de la Materia) = Dominio financiero, empresario consagrado, estabilidad inquebrantable y generosidad sólida",
+    uprightMeaning: "Maestro del mundo material: éxito financiero indiscutible, solidez patrimonial, patrocinador generoso y líder pragmático que sabe cómo multiplicar los recursos.",
+    reversedMeaning: "Avaricia despiadada, corrupción, medir el valor de las personas solo por su dinero o terquedad que arruina una empresa.",
+    question: "¿Cómo puedo usar mis recursos materiales y mi posición para construir una seguridad duradera para los míos?",
+    advice: "Construye con solvencia y honestidad: el verdadero señor de la tierra sabe que la riqueza sirve para dar vida y protección.",
+    keywordsUpright: ["Éxito financiero", "Solidez patrimonial", "Liderazgo pragmático", "Patrocinador generoso", "Seguridad total"],
+    keywordsReversed: ["Avaricia corrupta", "Materialismo frío", "Terquedad empresarial", "Aferramiento al dinero"]
+  }
+};
+
+// Assemble all 78 cards
+const allCards = [];
+
+// 1. Add 22 Major Arcana
+majorArcanaData.forEach(card => {
+  allCards.push({
+    ...card,
+    suit: null,
+    courtRank: null,
+    isMajor: true,
+    displayNumber: card.roman
+  });
+});
+
+// 2. Add 56 Minor Arcana
+suits.forEach(suit => {
+  // Numbers 1 to 10
+  for (let num = 1; num <= 10; num++) {
+    const numInfo = numberDefinitions[num];
+    const cardId = (num === 1 ? 'as' : num) + '-de-' + suit.key;
+    const cardName = (num === 1 ? 'As' : num) + ' de ' + suit.name;
+    const detail = minorCardsDetail[cardId] || {};
+
+    allCards.push({
+      id: cardId,
+      name: cardName,
+      arcana: "menor",
+      isMajor: false,
+      suit: suit.key,
+      suitName: suit.name,
+      element: suit.element,
+      elementArea: suit.area,
+      elementColor: suit.color,
+      number: num,
+      displayNumber: num === 1 ? 'As' : num.toString(),
+      phaseName: numInfo.name + ': ' + numInfo.phase,
+      phaseDesc: numInfo.desc,
+      courtRank: null,
+      courtTitle: null,
+      formula: detail.formula || `${suit.name} (${suit.element}) + ${numInfo.name} (${numInfo.phase})`,
+      visualObservation: detail.visualObservation || `Iconografía tradicional del ${cardName}`,
+      whatEyesSee: detail.whatEyesSee || `¿Qué está haciendo el dibujo? Observa los personajes, posturas y objetos.`,
+      uprightMeaning: detail.uprightMeaning || 'Significado al derecho en desarrollo.',
+      reversedMeaning: detail.reversedMeaning || 'Significado invertido en desarrollo.',
+      reflectiveQuestion: detail.question || '¿Qué te sugiere esta carta en este momento?',
+      advice: detail.advice || 'Aplica la fórmula elemental para discernir el camino.',
+      keywordsUpright: detail.keywordsUpright || [suit.name, numInfo.phase],
+      keywordsReversed: detail.keywordsReversed || ['Bloqueo de ' + suit.name, 'Desequilibrio']
+    });
+  }
+
+  // 4 Court Cards
+  const courtKeys = ['sota', 'caballo', 'reina', 'rey'];
+  courtKeys.forEach(rank => {
+    const courtInfo = courtDefinitions[rank];
+    const cardId = rank + '-de-' + suit.key;
+    const cardName = courtInfo.rankName + ' de ' + suit.name;
+    const detail = minorCardsDetail[cardId] || {};
+
+    allCards.push({
+      id: cardId,
+      name: cardName,
+      arcana: "menor",
+      isMajor: false,
+      suit: suit.key,
+      suitName: suit.name,
+      element: suit.element,
+      elementArea: suit.area,
+      elementColor: suit.color,
+      number: null,
+      displayNumber: courtInfo.rankName.substring(0, 1).toUpperCase(),
+      phaseName: courtInfo.title,
+      phaseDesc: courtInfo.attitude,
+      courtRank: rank,
+      courtTitle: courtInfo.title,
+      formula: detail.formula || `${suit.name} (${suit.element}) + ${courtInfo.rankName} (${courtInfo.title})`,
+      visualObservation: detail.visualObservation || `Iconografía tradicional del ${cardName}`,
+      whatEyesSee: detail.whatEyesSee || `¿Qué está haciendo el personaje? Observa su vestimenta, su mirada y cómo empuña su símbolo.`,
+      uprightMeaning: detail.uprightMeaning || 'Significado al derecho en desarrollo.',
+      reversedMeaning: detail.reversedMeaning || 'Significado invertido en desarrollo.',
+      reflectiveQuestion: detail.question || '¿Cómo encarnas la actitud de este personaje?',
+      advice: detail.advice || 'Integra la madurez de la corte con el elemento activo.',
+      keywordsUpright: detail.keywordsUpright || [suit.name, courtInfo.rankName],
+      keywordsReversed: detail.keywordsReversed || ['Exceso de ' + courtInfo.rankName, 'Sombra del ' + suit.name]
+    });
+  });
+});
+
+console.log(`Generated ${allCards.length} cards in total! (Expected: 78)`);
+
+// Export output file as JS window object / ES module
+const outputContent = `// Tarot Cards Full Database - 78 Cards
+// Specially structured around "El Viaje del Loco" & "Fórmula de Arcanos Menores"
+window.TAROT_DATA = {
+  septenaries: [
+    {
+      id: 0,
+      title: "El Viajero (Punto Cero)",
+      range: "Carta 0 (El Loco)",
+      theme: "El alma antes de encarnar, el potencial infinito y el salto de fe sin condicionamiento.",
+      cardsCount: 1,
+      quote: "El viajero que inicia la aventura sin equipaje pero con el corazón encendido."
+    },
+    {
+      id: 1,
+      title: "Septenario 1 (I al VII)",
+      range: "El plano terrenal, el ego y el desarrollo personal",
+      theme: "Aprender a operar en el mundo material, descubrir talentos, afirmar la voluntad y conquistar el éxito terrenal.",
+      cardsCount: 7,
+      quote: "Del Mago al Carro: la construcción de la identidad consciente y el dominio del entorno físico."
+    },
+    {
+      id: 2,
+      title: "Septenario 2 (VIII al XIV)",
+      range: "El viaje interior, el alma, el inconsciente y las crisis de madurez",
+      theme: "La mirada hacia adentro: domar pasiones (Fuerza), soledad fértil (Ermitaño), ciclos (Rueda), desapego (Muerte) y sanación alquímica (Templanza).",
+      cardsCount: 7,
+      quote: "De la Fuerza a la Templanza: la transformación profunda de la psique y el despertar del alma."
+    },
+    {
+      id: 3,
+      title: "Septenario 3 (XV al XXI)",
+      range: "Las pruebas espirituales, la sombra, la caída de falsedades y la liberación",
+      theme: "Confrontar la sombra (Diablo), derrumbe del falso ego (Torre), esperanza (Estrella), el abismo (Luna), la iluminación (Sol), el despertar (Juicio) y la danza cósmica (Mundo).",
+      cardsCount: 7,
+      quote: "Del Diablo al Mundo: la liberación radical de las ataduras y la integración cósmica definitiva."
+    }
+  ],
+  suits: ${JSON.stringify(suits, null, 2)},
+  numbers: ${JSON.stringify(numberDefinitions, null, 2)},
+  courts: ${JSON.stringify(courtDefinitions, null, 2)},
+  cards: ${JSON.stringify(allCards, null, 2)}
+};
+`;
+
+const outputPath = path.join(__dirname, 'data', 'cards.js');
+fs.writeFileSync(outputPath, outputContent, 'utf8');
+console.log(`Saved cards.js successfully to ${outputPath}`);
